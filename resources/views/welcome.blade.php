@@ -1,177 +1,1484 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="fr" x-data="{ dark: localStorage.getItem('theme') !== 'light', mobileOpen: false }" :class="dark ? 'dark' : ''" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatchRH Recrutement Intelligent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'DM Sans', sans-serif; }
 
-        <title>{{ __('Welcome') }} - {{ config('app.name', 'Laravel') }}</title>
+  .hero-grid {
+    background-image: linear-gradient(rgba(110,231,183,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(110,231,183,.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    -webkit-mask: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    mask: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+  }
+  .light .hero-grid {
+    background-image: linear-gradient(rgba(5,150,105,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(5,150,105,.07) 1px, transparent 1px);
+  }
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  .grad-text {
+    background: linear-gradient(135deg, #6ee7b7, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .glow-dot { box-shadow: 0 0 14px #34d399, 0 0 28px rgba(52,211,153,.4); }
 
-        @fonts
+  /* Scroll reveal */
+  .reveal        { opacity:0; transform:translateY(28px);  transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+  .reveal-l      { opacity:0; transform:translateX(-28px); transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+  .reveal-r      { opacity:0; transform:translateX(28px);  transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+  .reveal.on, .reveal-l.on, .reveal-r.on { opacity:1; transform:translate(0,0); }
+  .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
 
-        <!-- Styles / Scripts -->
+  .bar-fill { width:0; transition:width 1.3s cubic-bezier(.16,1,.3,1); }
+  .bar-fill.on { width:var(--w); }
+
+  /* MCP shimmer */
+  .mcp-shimmer {
+    background: linear-gradient(90deg, rgba(110,231,183,.06) 25%, rgba(110,231,183,.18) 50%, rgba(110,231,183,.06) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+  .price-card { transition: transform .3s cubic-bezier(.16,1,.3,1); }
+  .price-card:hover { transform: translateY(-5px); }
+
+  .mobile-drawer { transition: transform .35s cubic-bezier(.16,1,.3,1); }
+
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-thumb { background:rgba(110,231,183,.25); border-radius:999px; }
+</style>
+  @fluxAppearance
+
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <style>
-                @layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-x-reverse:0;--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-duration:initial;--tw-content:""}}}@layer theme{:root,:host{--font-sans:"Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-serif:ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-50:oklch(97.1% .013 17.38);--color-red-100:oklch(93.6% .032 17.717);--color-red-200:oklch(88.5% .062 18.334);--color-red-300:oklch(80.8% .114 19.571);--color-red-400:oklch(70.4% .191 22.216);--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-red-700:oklch(50.5% .213 27.518);--color-red-800:oklch(44.4% .177 26.899);--color-red-900:oklch(39.6% .141 25.723);--color-red-950:oklch(25.8% .092 26.042);--color-orange-50:oklch(98% .016 73.684);--color-orange-100:oklch(95.4% .038 75.164);--color-orange-200:oklch(90.1% .076 70.697);--color-orange-300:oklch(83.7% .128 66.29);--color-orange-400:oklch(75% .183 55.934);--color-orange-500:oklch(70.5% .213 47.604);--color-orange-600:oklch(64.6% .222 41.116);--color-orange-700:oklch(55.3% .195 38.402);--color-orange-800:oklch(47% .157 37.304);--color-orange-900:oklch(40.8% .123 38.172);--color-orange-950:oklch(26.6% .079 36.259);--color-amber-50:oklch(98.7% .022 95.277);--color-amber-100:oklch(96.2% .059 95.617);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-400:oklch(82.8% .189 84.429);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-700:oklch(55.5% .163 48.998);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-900:oklch(41.4% .112 45.904);--color-amber-950:oklch(27.9% .077 45.635);--color-yellow-50:oklch(98.7% .026 102.212);--color-yellow-100:oklch(97.3% .071 103.193);--color-yellow-200:oklch(94.5% .129 101.54);--color-yellow-300:oklch(90.5% .182 98.111);--color-yellow-400:oklch(85.2% .199 91.936);--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-yellow-700:oklch(55.4% .135 66.442);--color-yellow-800:oklch(47.6% .114 61.907);--color-yellow-900:oklch(42.1% .095 57.708);--color-yellow-950:oklch(28.6% .066 53.813);--color-lime-50:oklch(98.6% .031 120.757);--color-lime-100:oklch(96.7% .067 122.328);--color-lime-200:oklch(93.8% .127 124.321);--color-lime-300:oklch(89.7% .196 126.665);--color-lime-400:oklch(84.1% .238 128.85);--color-lime-500:oklch(76.8% .233 130.85);--color-lime-600:oklch(64.8% .2 131.684);--color-lime-700:oklch(53.2% .157 131.589);--color-lime-800:oklch(45.3% .124 130.933);--color-lime-900:oklch(40.5% .101 131.063);--color-lime-950:oklch(27.4% .072 132.109);--color-green-50:oklch(98.2% .018 155.826);--color-green-100:oklch(96.2% .044 156.743);--color-green-200:oklch(92.5% .084 155.995);--color-green-300:oklch(87.1% .15 154.449);--color-green-400:oklch(79.2% .209 151.711);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-green-700:oklch(52.7% .154 150.069);--color-green-800:oklch(44.8% .119 151.328);--color-green-900:oklch(39.3% .095 152.535);--color-green-950:oklch(26.6% .065 152.934);--color-emerald-50:oklch(97.9% .021 166.113);--color-emerald-100:oklch(95% .052 163.051);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-300:oklch(84.5% .143 164.978);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-700:oklch(50.8% .118 165.612);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-emerald-950:oklch(26.2% .051 172.552);--color-teal-50:oklch(98.4% .014 180.72);--color-teal-100:oklch(95.3% .051 180.801);--color-teal-200:oklch(91% .096 180.426);--color-teal-300:oklch(85.5% .138 181.071);--color-teal-400:oklch(77.7% .152 181.912);--color-teal-500:oklch(70.4% .14 182.503);--color-teal-600:oklch(60% .118 184.704);--color-teal-700:oklch(51.1% .096 186.391);--color-teal-800:oklch(43.7% .078 188.216);--color-teal-900:oklch(38.6% .063 188.416);--color-teal-950:oklch(27.7% .046 192.524);--color-cyan-50:oklch(98.4% .019 200.873);--color-cyan-100:oklch(95.6% .045 203.388);--color-cyan-200:oklch(91.7% .08 205.041);--color-cyan-300:oklch(86.5% .127 207.078);--color-cyan-400:oklch(78.9% .154 211.53);--color-cyan-500:oklch(71.5% .143 215.221);--color-cyan-600:oklch(60.9% .126 221.723);--color-cyan-700:oklch(52% .105 223.128);--color-cyan-800:oklch(45% .085 224.283);--color-cyan-900:oklch(39.8% .07 227.392);--color-cyan-950:oklch(30.2% .056 229.695);--color-sky-50:oklch(97.7% .013 236.62);--color-sky-100:oklch(95.1% .026 236.824);--color-sky-200:oklch(90.1% .058 230.902);--color-sky-300:oklch(82.8% .111 230.318);--color-sky-400:oklch(74.6% .16 232.661);--color-sky-500:oklch(68.5% .169 237.323);--color-sky-600:oklch(58.8% .158 241.966);--color-sky-700:oklch(50% .134 242.749);--color-sky-800:oklch(44.3% .11 240.79);--color-sky-900:oklch(39.1% .09 240.876);--color-sky-950:oklch(29.3% .066 243.157);--color-blue-50:oklch(97% .014 254.604);--color-blue-100:oklch(93.2% .032 255.585);--color-blue-200:oklch(88.2% .059 254.128);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-400:oklch(70.7% .165 254.624);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-700:oklch(48.8% .243 264.376);--color-blue-800:oklch(42.4% .199 265.638);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-indigo-50:oklch(96.2% .018 272.314);--color-indigo-100:oklch(93% .034 272.788);--color-indigo-200:oklch(87% .065 274.039);--color-indigo-300:oklch(78.5% .115 274.713);--color-indigo-400:oklch(67.3% .182 276.935);--color-indigo-500:oklch(58.5% .233 277.117);--color-indigo-600:oklch(51.1% .262 276.966);--color-indigo-700:oklch(45.7% .24 277.023);--color-indigo-800:oklch(39.8% .195 277.366);--color-indigo-900:oklch(35.9% .144 278.697);--color-indigo-950:oklch(25.7% .09 281.288);--color-violet-50:oklch(96.9% .016 293.756);--color-violet-100:oklch(94.3% .029 294.588);--color-violet-200:oklch(89.4% .057 293.283);--color-violet-300:oklch(81.1% .111 293.571);--color-violet-400:oklch(70.2% .183 293.541);--color-violet-500:oklch(60.6% .25 292.717);--color-violet-600:oklch(54.1% .281 293.009);--color-violet-700:oklch(49.1% .27 292.581);--color-violet-800:oklch(43.2% .232 292.759);--color-violet-900:oklch(38% .189 293.745);--color-violet-950:oklch(28.3% .141 291.089);--color-purple-50:oklch(97.7% .014 308.299);--color-purple-100:oklch(94.6% .033 307.174);--color-purple-200:oklch(90.2% .063 306.703);--color-purple-300:oklch(82.7% .119 306.383);--color-purple-400:oklch(71.4% .203 305.504);--color-purple-500:oklch(62.7% .265 303.9);--color-purple-600:oklch(55.8% .288 302.321);--color-purple-700:oklch(49.6% .265 301.924);--color-purple-800:oklch(43.8% .218 303.724);--color-purple-900:oklch(38.1% .176 304.987);--color-purple-950:oklch(29.1% .149 302.717);--color-fuchsia-50:oklch(97.7% .017 320.058);--color-fuchsia-100:oklch(95.2% .037 318.852);--color-fuchsia-200:oklch(90.3% .076 319.62);--color-fuchsia-300:oklch(83.3% .145 321.434);--color-fuchsia-400:oklch(74% .238 322.16);--color-fuchsia-500:oklch(66.7% .295 322.15);--color-fuchsia-600:oklch(59.1% .293 322.896);--color-fuchsia-700:oklch(51.8% .253 323.949);--color-fuchsia-800:oklch(45.2% .211 324.591);--color-fuchsia-900:oklch(40.1% .17 325.612);--color-fuchsia-950:oklch(29.3% .136 325.661);--color-pink-50:oklch(97.1% .014 343.198);--color-pink-100:oklch(94.8% .028 342.258);--color-pink-200:oklch(89.9% .061 343.231);--color-pink-300:oklch(82.3% .12 346.018);--color-pink-400:oklch(71.8% .202 349.761);--color-pink-500:oklch(65.6% .241 354.308);--color-pink-600:oklch(59.2% .249 .584);--color-pink-700:oklch(52.5% .223 3.958);--color-pink-800:oklch(45.9% .187 3.815);--color-pink-900:oklch(40.8% .153 2.432);--color-pink-950:oklch(28.4% .109 3.907);--color-rose-50:oklch(96.9% .015 12.422);--color-rose-100:oklch(94.1% .03 12.58);--color-rose-200:oklch(89.2% .058 10.001);--color-rose-300:oklch(81% .117 11.638);--color-rose-400:oklch(71.2% .194 13.428);--color-rose-500:oklch(64.5% .246 16.439);--color-rose-600:oklch(58.6% .253 17.585);--color-rose-700:oklch(51.4% .222 16.935);--color-rose-800:oklch(45.5% .188 13.697);--color-rose-900:oklch(41% .159 10.272);--color-rose-950:oklch(27.1% .105 12.094);--color-slate-50:oklch(98.4% .003 247.858);--color-slate-100:oklch(96.8% .007 247.896);--color-slate-200:oklch(92.9% .013 255.508);--color-slate-300:oklch(86.9% .022 252.894);--color-slate-400:oklch(70.4% .04 256.788);--color-slate-500:oklch(55.4% .046 257.417);--color-slate-600:oklch(44.6% .043 257.281);--color-slate-700:oklch(37.2% .044 257.287);--color-slate-800:oklch(27.9% .041 260.031);--color-slate-900:oklch(20.8% .042 265.755);--color-slate-950:oklch(12.9% .042 264.695);--color-gray-50:oklch(98.5% .002 247.839);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-300:oklch(87.2% .01 258.338);--color-gray-400:oklch(70.7% .022 261.325);--color-gray-500:oklch(55.1% .027 264.364);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-700:oklch(37.3% .034 259.733);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-gray-950:oklch(13% .028 261.692);--color-zinc-50:oklch(98.5% 0 0);--color-zinc-100:oklch(96.7% .001 286.375);--color-zinc-200:oklch(92% .004 286.32);--color-zinc-300:oklch(87.1% .006 286.286);--color-zinc-400:oklch(70.5% .015 286.067);--color-zinc-500:oklch(55.2% .016 285.938);--color-zinc-600:oklch(44.2% .017 285.786);--color-zinc-700:oklch(37% .013 285.805);--color-zinc-800:oklch(27.4% .006 286.033);--color-zinc-900:oklch(21% .006 285.885);--color-zinc-950:oklch(14.1% .005 285.823);--color-neutral-50:oklch(98.5% 0 0);--color-neutral-100:oklch(97% 0 0);--color-neutral-200:oklch(92.2% 0 0);--color-neutral-300:oklch(87% 0 0);--color-neutral-400:oklch(70.8% 0 0);--color-neutral-500:oklch(55.6% 0 0);--color-neutral-600:oklch(43.9% 0 0);--color-neutral-700:oklch(37.1% 0 0);--color-neutral-800:oklch(26.9% 0 0);--color-neutral-900:oklch(20.5% 0 0);--color-neutral-950:oklch(14.5% 0 0);--color-stone-50:oklch(98.5% .001 106.423);--color-stone-100:oklch(97% .001 106.424);--color-stone-200:oklch(92.3% .003 48.717);--color-stone-300:oklch(86.9% .005 56.366);--color-stone-400:oklch(70.9% .01 56.259);--color-stone-500:oklch(55.3% .013 58.071);--color-stone-600:oklch(44.4% .011 73.639);--color-stone-700:oklch(37.4% .01 67.558);--color-stone-800:oklch(26.8% .007 34.298);--color-stone-900:oklch(21.6% .006 56.043);--color-stone-950:oklch(14.7% .004 49.25);--color-black:#000;--color-white:#fff;--spacing:.25rem;--breakpoint-sm:40rem;--breakpoint-md:48rem;--breakpoint-lg:64rem;--breakpoint-xl:80rem;--breakpoint-2xl:96rem;--container-3xs:16rem;--container-2xs:18rem;--container-xs:20rem;--container-sm:24rem;--container-md:28rem;--container-lg:32rem;--container-xl:36rem;--container-2xl:42rem;--container-3xl:48rem;--container-4xl:56rem;--container-5xl:64rem;--container-6xl:72rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height: 1.2 ;--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5 / 2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--text-8xl:6rem;--text-8xl--line-height:1;--text-9xl:8rem;--text-9xl--line-height:1;--font-weight-thin:100;--font-weight-extralight:200;--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--font-weight-black:900;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-normal:0em;--tracking-wide:.025em;--tracking-wider:.05em;--tracking-widest:.1em;--leading-tight:1.25;--leading-snug:1.375;--leading-normal:1.5;--leading-relaxed:1.625;--leading-loose:2;--radius-xs:.125rem;--radius-sm:.25rem;--radius-md:.375rem;--radius-lg:.5rem;--radius-xl:.75rem;--radius-2xl:1rem;--radius-3xl:1.5rem;--radius-4xl:2rem;--shadow-2xs:0 1px #0000000d;--shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;--shadow-md:0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;--shadow-lg:0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;--shadow-xl:0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;--shadow-2xl:0 25px 50px -12px #00000040;--inset-shadow-2xs:inset 0 1px #0000000d;--inset-shadow-xs:inset 0 1px 1px #0000000d;--inset-shadow-sm:inset 0 2px 4px #0000000d;--drop-shadow-xs:0 1px 1px #0000000d;--drop-shadow-sm:0 1px 2px #00000026;--drop-shadow-md:0 3px 3px #0000001f;--drop-shadow-lg:0 4px 4px #00000026;--drop-shadow-xl:0 9px 7px #0000001a;--drop-shadow-2xl:0 25px 25px #00000026;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--animate-pulse:pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-sm:8px;--blur-md:12px;--blur-lg:16px;--blur-xl:24px;--blur-2xl:40px;--blur-3xl:64px;--perspective-dramatic:100px;--perspective-near:300px;--perspective-normal:500px;--perspective-midrange:800px;--perspective-distant:1200px;--aspect-video:16 / 9;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.absolute{position:absolute}.relative{position:relative}.static{position:static}.inset-0{inset:calc(var(--spacing) * 0)}.start{inset-inline-start:var(--spacing)}.ms-1{margin-inline-start:calc(var(--spacing) * 1)}.-mt-\[6\.6rem\]{margin-top:-6.6rem}.-mb-px{margin-bottom:-1px}.mb-1{margin-bottom:calc(var(--spacing) * 1)}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-4{margin-bottom:calc(var(--spacing) * 4)}.mb-6{margin-bottom:calc(var(--spacing) * 6)}.-ml-8{margin-left:calc(var(--spacing) * -8)}.contents{display:contents}.flex{display:flex}.hidden{display:none}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.table{display:table}.aspect-\[335\/364\]{aspect-ratio:335/364}.h-1{height:calc(var(--spacing) * 1)}.h-1\.5{height:calc(var(--spacing) * 1.5)}.h-2{height:calc(var(--spacing) * 2)}.h-2\.5{height:calc(var(--spacing) * 2.5)}.h-3{height:calc(var(--spacing) * 3)}.h-3\.5{height:calc(var(--spacing) * 3.5)}.h-14{height:calc(var(--spacing) * 14)}.h-14\.5{height:calc(var(--spacing) * 14.5)}.min-h-screen{min-height:100vh}.w-1{width:calc(var(--spacing) * 1)}.w-1\.5{width:calc(var(--spacing) * 1.5)}.w-2{width:calc(var(--spacing) * 2)}.w-2\.5{width:calc(var(--spacing) * 2.5)}.w-3{width:calc(var(--spacing) * 3)}.w-3\.5{width:calc(var(--spacing) * 3.5)}.w-\[438px\]{width:438px}.w-full{width:100%}.max-w-\[335px\]{max-width:335px}.max-w-none{max-width:none}.flex-1{flex:1}.shrink-0{flex-shrink:0}.translate-y-0{--tw-translate-y:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.items-center{align-items:center}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-x-1>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing) * 1) * var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-x-reverse)))}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:3.40282e38px}.rounded-sm{border-radius:var(--radius-sm)}.rounded-ee-lg{border-end-end-radius:var(--radius-lg)}.rounded-es-lg{border-end-start-radius:var(--radius-lg)}.rounded-t-lg{border-top-left-radius:var(--radius-lg);border-top-right-radius:var(--radius-lg)}.rounded-br-lg{border-bottom-right-radius:var(--radius-lg)}.rounded-bl-lg{border-bottom-left-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-\[\#19140035\]{border-color:#19140035}.border-\[\#e3e3e0\]{border-color:#e3e3e0}.border-black{border-color:var(--color-black)}.border-transparent{border-color:#0000}.bg-\[\#1b1b18\]{background-color:#1b1b18}.bg-\[\#FDFDFC\]{background-color:#fdfdfc}.bg-\[\#dbdbd7\]{background-color:#dbdbd7}.bg-\[\#fff2f2\]{background-color:#fff2f2}.bg-white{background-color:var(--color-white)}.p-6{padding:calc(var(--spacing) * 6)}.px-5{padding-inline:calc(var(--spacing) * 5)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.pb-12{padding-bottom:calc(var(--spacing) * 12)}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-\[13px\]{font-size:13px}.leading-\[20px\]{--tw-leading:20px;line-height:20px}.leading-normal{--tw-leading:var(--leading-normal);line-height:var(--leading-normal)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.text-\[\#1B1B18\],.text-\[\#1b1b18\]{color:#1b1b18}.text-\[\#706f6c\]{color:#706f6c}.text-\[\#F3BEC7\]{color:#f3bec7}.text-\[\#F8B803\]{color:#f8b803}.text-\[\#F53003\],.text-\[\#f53003\]{color:#f53003}.text-white{color:var(--color-white)}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.opacity-100{opacity:1}.mix-blend-color{mix-blend-mode:color}.mix-blend-darken{mix-blend-mode:darken}.mix-blend-hard-light{mix-blend-mode:hard-light}.mix-blend-multiply{mix-blend-mode:multiply}.shadow-\[0px_0px_1px_0px_rgba\(0\,0\,0\,0\.03\)\,0px_1px_2px_0px_rgba\(0\,0\,0\,0\.06\)\]{--tw-shadow:0px 0px 1px 0px var(--tw-shadow-color,#00000008), 0px 1px 2px 0px var(--tw-shadow-color,#0000000f);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[inset_0px_0px_0px_1px_rgba\(26\,26\,0\,0\.16\)\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#1a1a0029);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.delay-300{transition-delay:.3s}.delay-400{transition-delay:.4s}.duration-750{--tw-duration:.75s;transition-duration:.75s}.\[--stroke-color\:\#1B1B18\]{--stroke-color:#1b1b18}.not-has-\[nav\]\:hidden:not(:has(:is(nav))){display:none}.before\:absolute:before{content:var(--tw-content);position:absolute}.before\:start-\[0\.4rem\]:before{content:var(--tw-content);inset-inline-start:.4rem}.before\:top-0:before{content:var(--tw-content);top:calc(var(--spacing) * 0)}.before\:top-1\/2:before{content:var(--tw-content);top:50%}.before\:bottom-0:before{content:var(--tw-content);bottom:calc(var(--spacing) * 0)}.before\:bottom-1\/2:before{content:var(--tw-content);bottom:50%}.before\:left-\[0\.4rem\]:before{content:var(--tw-content);left:.4rem}.before\:border-l:before{content:var(--tw-content);border-left-style:var(--tw-border-style);border-left-width:1px}.before\:border-\[\#e3e3e0\]:before{content:var(--tw-content);border-color:#e3e3e0}@media(hover:hover){.hover\:border-\[\#1915014a\]:hover{border-color:#1915014a}.hover\:border-\[\#19140035\]:hover{border-color:#19140035}.hover\:border-black:hover{border-color:var(--color-black)}.hover\:bg-black:hover{background-color:var(--color-black)}}@media(min-width:64rem){.lg\:mb-0{margin-bottom:calc(var(--spacing) * 0)}.lg\:mb-6{margin-bottom:calc(var(--spacing) * 6)}.lg\:-ml-px{margin-left:-1px}.lg\:ml-0{margin-left:calc(var(--spacing) * 0)}.lg\:block{display:block}.lg\:aspect-auto{aspect-ratio:auto}.lg\:w-\[438px\]{width:438px}.lg\:max-w-4xl{max-width:var(--container-4xl)}.lg\:grow{flex-grow:1}.lg\:flex-row{flex-direction:row}.lg\:justify-center{justify-content:center}.lg\:rounded-ss-lg{border-start-start-radius:var(--radius-lg)}.lg\:rounded-ee-none{border-end-end-radius:0}.lg\:rounded-t-none{border-top-left-radius:0;border-top-right-radius:0}.lg\:rounded-r-lg{border-top-right-radius:var(--radius-lg);border-bottom-right-radius:var(--radius-lg)}.lg\:p-8{padding:calc(var(--spacing) * 8)}.lg\:p-20{padding:calc(var(--spacing) * 20)}}@media(prefers-color-scheme:dark){.dark\:border-\[\#3E3E3A\]{border-color:#3e3e3a}.dark\:border-\[\#eeeeec\]{border-color:#eeeeec}.dark\:bg-\[\#0a0a0a\]{background-color:#0a0a0a}.dark\:bg-\[\#1D0002\]{background-color:#1d0002}.dark\:bg-\[\#3E3E3A\]{background-color:#3e3e3a}.dark\:bg-\[\#161615\]{background-color:#161615}.dark\:bg-\[\#eeeeec\]{background-color:#eeeeec}.dark\:text-\[\#1C1C1A\]{color:#1c1c1a}.dark\:text-\[\#4B0600\]{color:#4b0600}.dark\:text-\[\#391800\]{color:#391800}.dark\:text-\[\#733000\]{color:#733000}.dark\:text-\[\#A1A09A\]{color:#a1a09a}.dark\:text-\[\#EDEDEC\]{color:#ededec}.dark\:text-\[\#F61500\]{color:#f61500}.dark\:text-\[\#FF4433\]{color:#f43}.dark\:text-black{color:var(--color-black)}.dark\:mix-blend-hard-light{mix-blend-mode:hard-light}.dark\:mix-blend-normal{mix-blend-mode:normal}.dark\:shadow-\[inset_0px_0px_0px_1px_\#fffaed2d\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#fffaed2d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.dark\:\[--stroke-color\:\#FF750F\]{--stroke-color:#ff750f}.dark\:before\:border-\[\#3E3E3A\]:before{content:var(--tw-content);border-color:#3e3e3a}@media(hover:hover){.dark\:hover\:border-\[\#3E3E3A\]:hover{border-color:#3e3e3a}.dark\:hover\:border-\[\#62605b\]:hover{border-color:#62605b}.dark\:hover\:border-white:hover{border-color:var(--color-white)}.dark\:hover\:bg-white:hover{background-color:var(--color-white)}}}@starting-style{.starting\:opacity-0{opacity:0}}@media(prefers-reduced-motion:no-preference){@starting-style{.motion-safe\:starting\:-translate-x-\[26px\]{--tw-translate-x: -26px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[51px\]{--tw-translate-x: -51px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[78px\]{--tw-translate-x: -78px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:-translate-x-\[102px\]{--tw-translate-x: -102px ;translate:var(--tw-translate-x) var(--tw-translate-y)}}@starting-style{.motion-safe\:starting\:translate-y-6{--tw-translate-y:calc(var(--spacing) * 6);translate:var(--tw-translate-x) var(--tw-translate-y)}}}}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}
-            </style>
         @endif
-    </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
-            <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
-                <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-es-lg rounded-ee-lg lg:rounded-ss-lg lg:rounded-ee-none">
-                    <h1 class="mb-1 font-medium">Let's get started</h1>
-                    <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">Laravel has an incredibly rich ecosystem. <br>We suggest starting with the following.</p>
-                    <ul class="flex flex-col mb-4 lg:mb-6">
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:top-1/2 before:bottom-0 before:left-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Read the
-                                <a href="https://laravel.com/docs" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ms-1">
-                                    <span>Documentation</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:bottom-1/2 before:top-0 before:start-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Watch video tutorials at
-                                <a href="https://laracasts.com" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ms-1">
-                                    <span>Laracasts</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                    </ul>
-                    <ul class="flex gap-3 text-sm leading-normal">
-                        <li>
-                            <a href="https://cloud.laravel.com" target="_blank" class="inline-block dark:bg-[#eeeeec] dark:border-[#eeeeec] dark:text-[#1C1C1A] dark:hover:bg-white dark:hover:border-white hover:bg-black hover:border-black px-5 py-1.5 bg-[#1b1b18] rounded-sm border border-black text-white text-sm leading-normal">
-                                Deploy now
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/364] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden">
-                    {{-- Laravel Logo --}}
-                    <svg class="w-full text-[#F53003] dark:text-[#F61500] transition-all translate-y-0 opacity-100 max-w-none duration-750 starting:opacity-0 motion-safe:starting:translate-y-6" viewBox="0 0 438 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.2036 -3H0V102.197H49.5189V86.7187H17.2036V-3Z" fill="currentColor" />
-                        <path d="M110.256 41.6337C108.061 38.1275 104.945 35.3731 100.905 33.3681C96.8667 31.3647 92.8016 30.3618 88.7131 30.3618C83.4247 30.3618 78.5885 31.3389 74.201 33.2923C69.8111 35.2456 66.0474 37.928 62.9059 41.3333C59.7643 44.7401 57.3198 48.6726 55.5754 53.1293C53.8287 57.589 52.9572 62.274 52.9572 67.1813C52.9572 72.1925 53.8287 76.8995 55.5754 81.3069C57.3191 85.7173 59.7636 89.6241 62.9059 93.0293C66.0474 96.4361 69.8119 99.1155 74.201 101.069C78.5885 103.022 83.4247 103.999 88.7131 103.999C92.8016 103.999 96.8667 102.997 100.905 100.994C104.945 98.9911 108.061 96.2359 110.256 92.7282V102.195H126.563V32.1642H110.256V41.6337ZM108.76 75.7472C107.762 78.4531 106.366 80.8078 104.572 82.8112C102.776 84.8161 100.606 86.4183 98.0637 87.6206C95.5202 88.823 92.7004 89.4238 89.6103 89.4238C86.5178 89.4238 83.7252 88.823 81.2324 87.6206C78.7388 86.4183 76.5949 84.8161 74.7998 82.8112C73.004 80.8078 71.6319 78.4531 70.6856 75.7472C69.7356 73.0421 69.2644 70.1868 69.2644 67.1821C69.2644 64.1758 69.7356 61.3205 70.6856 58.6154C71.6319 55.9102 73.004 53.5571 74.7998 51.5522C76.5949 49.5495 78.738 47.9451 81.2324 46.7427C83.7252 45.5404 86.5178 44.9396 89.6103 44.9396C92.7012 44.9396 95.5202 45.5404 98.0637 46.7427C100.606 47.9451 102.776 49.5487 104.572 51.5522C106.367 53.5571 107.762 55.9102 108.76 58.6154C109.756 61.3205 110.256 64.1758 110.256 67.1821C110.256 70.1868 109.756 73.0421 108.76 75.7472Z" fill="currentColor" />
-                        <path d="M242.805 41.6337C240.611 38.1275 237.494 35.3731 233.455 33.3681C229.416 31.3647 225.351 30.3618 221.262 30.3618C215.974 30.3618 211.138 31.3389 206.75 33.2923C202.36 35.2456 198.597 37.928 195.455 41.3333C192.314 44.7401 189.869 48.6726 188.125 53.1293C186.378 57.589 185.507 62.274 185.507 67.1813C185.507 72.1925 186.378 76.8995 188.125 81.3069C189.868 85.7173 192.313 89.6241 195.455 93.0293C198.597 96.4361 202.361 99.1155 206.75 101.069C211.138 103.022 215.974 103.999 221.262 103.999C225.351 103.999 229.416 102.997 233.455 100.994C237.494 98.9911 240.611 96.2359 242.805 92.7282V102.195H259.112V32.1642H242.805V41.6337ZM241.31 75.7472C240.312 78.4531 238.916 80.8078 237.122 82.8112C235.326 84.8161 233.156 86.4183 230.614 87.6206C228.07 88.823 225.251 89.4238 222.16 89.4238C219.068 89.4238 216.275 88.823 213.782 87.6206C211.289 86.4183 209.145 84.8161 207.35 82.8112C205.554 80.8078 204.182 78.4531 203.236 75.7472C202.286 73.0421 201.814 70.1868 201.814 67.1821C201.814 64.1758 202.286 61.3205 203.236 58.6154C204.182 55.9102 205.554 53.5571 207.35 51.5522C209.145 49.5495 211.288 47.9451 213.782 46.7427C216.275 45.5404 219.068 44.9396 222.16 44.9396C225.251 44.9396 228.07 45.5404 230.614 46.7427C233.156 47.9451 235.326 49.5487 237.122 51.5522C238.917 53.5571 240.312 55.9102 241.31 58.6154C242.306 61.3205 242.806 64.1758 242.806 67.1821C242.805 70.1868 242.305 73.0421 241.31 75.7472Z" fill="currentColor" />
-                        <path d="M438 -3H421.694V102.197H438V-3Z" fill="currentColor" />
-                        <path d="M139.43 102.197H155.735V48.2834H183.712V32.1665H139.43V102.197Z" fill="currentColor" />
-                        <path d="M324.49 32.1665L303.995 85.794L283.498 32.1665H266.983L293.748 102.197H314.242L341.006 32.1665H324.49Z" fill="currentColor" />
-                        <path d="M376.571 30.3656C356.603 30.3656 340.797 46.8497 340.797 67.1828C340.797 89.6597 356.094 104 378.661 104C391.29 104 399.354 99.1488 409.206 88.5848L398.189 80.0226C398.183 80.031 389.874 90.9895 377.468 90.9895C363.048 90.9895 356.977 79.3111 356.977 73.269H411.075C413.917 50.1328 398.775 30.3656 376.571 30.3656ZM357.02 61.0967C357.145 59.7487 359.023 43.3761 376.442 43.3761C393.861 43.3761 395.978 59.7464 396.099 61.0967H357.02Z" fill="currentColor" />
-                    </svg>
 
-                    {{-- 13 --}}
-                    <svg class="w-[438px] max-w-none relative -mt-[6.6rem] -ml-8 lg:ml-0 [--stroke-color:#1B1B18] dark:[--stroke-color:#FF750F]" viewBox="0 0 440 392" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g class="mix-blend-darken dark:mix-blend-normal transition-all delay-300 opacity-100 duration-750 starting:opacity-0 text-[#1B1B18] dark:text-black">
-                            <mask id="path-1-mask" maskUnits="userSpaceOnUse" x="-0.328613" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="-0.328613" y="103" width="338" height="299"/>
-                                <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z"/>
-                                <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z"/>
-                            </mask>
-                            <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z" fill="currentColor"/>
-                            <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z" fill="currentColor"/>
-                            <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-1-mask)"/>
-                            <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-1-mask)"/>
-                        </g>
+        @php
+            // ─── FAQ ─────────────────────────────────────────────────────
+            $faqs = [
+                ['question' => 'Ai-je besoin de connaissances en paie pour utiliser Squarhe ?', 'answer' => 'Non. Squarhe est conçu pour les dirigeants et gestionnaires qui ne sont pas experts en paie. L\'interface vous guide étape par étape : vous saisissez les variables, Squarhe calcule, vous validez. Notre équipe vous accompagne à la prise en main la plupart de nos clients sont opérationnels en moins d\'une journée.'],
+                ['question' => 'Combien coûte Squarhe concrètement pour mon équipe ?', 'answer' => 'Squarhe démarre à 14 900 FCFA/mois pour 5 employés (offre Starter). Pour 20 employés, l\'offre Croissance revient à 34 900 FCFA/mois soit moins de 1 750 FCFA par employé. Utilisez le simulateur de tarifs sur cette page pour voir votre prix exact selon votre effectif.'],
+                ['question' => 'Y a-t-il des frais cachés ou des suppléments ?', 'answer' => 'Non. Le prix affiché couvre les bulletins, les documents RH habituels et le support. Il n\'y a pas de facturation à l\'acte pour les procédures courantes. Seul le setup fee (mise en service initiale) est séparé, négociable selon votre situation.'],
+                ['question' => 'Est-ce que Squarhe couvre la CNPS et l\'IRPP camerounais ?', 'answer' => 'Oui. Squarhe intègre les règles de calcul CNPS et IRPP en vigueur au Cameroun, avec des mises à jour automatiques en cas de changement réglementaire. Vous disposez également des exports nécessaires pour vos déclarations et contrôles.'],
+                ['question' => 'Que se passe-t-il si mon équipe grossit ?', 'answer' => 'Squarhe s\'adapte à votre croissance. Vous pouvez passer d\'une offre à l\'autre à tout moment, sans engagement annuel. Le simulateur de tarifs sur cette page calcule automatiquement votre prix en fonction de votre effectif.'],
+                ['question' => 'Squarhe couvre-t-il tous les secteurs d\'activité ?', 'answer' => 'Squarhe couvre la majorité des PME de services, commerce et industrie légère. Certaines conventions spécifiques comme le BTP et l\'agriculture ne sont pas encore entièrement intégrées, mais vous pouvez configurer vos propres bases de calcul. Contactez-nous pour évaluer votre situation.'],
+                ['question' => 'Comment se passe la migration depuis Excel ?', 'answer' => 'Nous vous accompagnons pendant la migration. Notre équipe reprend vos données existantes (employés, historique, variables) et les importe dans Squarhe. La migration se fait idéalement en fin de mois ou d\'exercice pour une continuité parfaite.'],
+                ['question' => 'Mes données sont-elles sécurisées ?', 'answer' => 'Oui. Les accès sont contrôlés par rôle (administrateur, gestionnaire, employé), vos données sont sauvegardées automatiquement et toutes les actions importantes sont tracées. Vos bulletins et contrats sont archivés dans un espace structuré et sécurisé.'],
+            ];
+        @endphp
+</head>
 
-                        <g class="transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[26px] text-[#F3BEC7] dark:text-[#4B0600]">
-                            <mask id="path-2-mask" maskUnits="userSpaceOnUse" x="25.3357" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="25.3357" y="103" width="338" height="299"/>
-                                <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z"/>
-                                <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z"/>
-                            </mask>
-                            <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z" fill="currentColor"/>
-                            <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z" fill="currentColor"/>
-                            <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-2-mask)"/>
-                            <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-2-mask)"/>
-                        </g>
+<body class="antialiased overflow-x-hidden transition-colors duration-300"
+      :class="dark ? 'bg-zinc-950 text-zinc-100' : 'bg-slate-50 text-zinc-900'"
+      x-init="
+        $nextTick(() => {
+          const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+              if (e.isIntersecting) {
+                e.target.classList.add('on');
+                if (e.target.classList.contains('bar-fill')) e.target.style.width = e.target.style.getPropertyValue('--w') || e.target.getAttribute('data-w') + '%';
+              }
+            });
+          }, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+          document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.bar-fill').forEach(el => obs.observe(el));
+        })
+      ">
+<div
+    x-data="{ scrolled: false, menuOpen: false }"
+    x-on:scroll.window="scrolled = window.scrollY > 60"
+>
 
-                        <g class="mix-blend-color dark:mix-blend-hard-light transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[51px] text-[#F8B803] dark:text-[#391800]">
-                            <mask id="path-3-mask" maskUnits="userSpaceOnUse" x="51" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="51" y="103" width="338" height="299"/>
-                                <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z"/>
-                                <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z"/>
-                            </mask>
-                            <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z" fill="currentColor"/>
-                            <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z" fill="currentColor"/>
-                            <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-3-mask)"/>
-                            <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-3-mask)"/>
-                        </g>
+    {{-- ── Overlay sombre derrière le menu mobile ── --}}
+    <div
+        x-show="menuOpen"
+        x-transition:enter="transition duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        x-on:click="menuOpen = false"
+        class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+        aria-hidden="true"
+    ></div>
 
-                        <g class="mix-blend-multiply dark:mix-blend-normal transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[78px] text-[#F3BEC7] dark:text-[#733000]">
-                            <mask id="path-4-mask" maskUnits="userSpaceOnUse" x="76.6643" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="76.6643" y="103" width="338" height="299"/>
-                                <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z"/>
-                                <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z"/>
-                            </mask>
-                            <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z" fill="currentColor"/>
-                            <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z" fill="currentColor"/>
-                            <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-4-mask)"/>
-                            <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-4-mask)"/>
-                        </g>
-
-                        <g class="mix-blend-hard-light transition-all delay-400 opacity-100 duration-750 starting:opacity-0 motion-safe:starting:-translate-x-[102px] text-[#F3BEC7] dark:text-[#4B0600]">
-                            <mask id="path-5-mask" maskUnits="userSpaceOnUse" x="102.329" y="103" width="338" height="299" fill="black">
-                                <rect fill="white" x="102.329" y="103" width="338" height="299"/>
-                                <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z"/>
-                                <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z"/>
-                            </mask>
-                            <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z" fill="currentColor"/>
-                            <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z" fill="currentColor"/>
-                            <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-5-mask)"/>
-                            <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z" stroke="var(--stroke-color)" stroke-width="2.4" mask="url(#path-5-mask)"/>
-                        </g>
-                    </svg>
-                    <div class="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"></div>
-                </div>
-            </main>
+    {{-- ── Menu mobile plein écran (slide from top) ── --}}
+    <div
+        x-show="menuOpen"
+        x-transition:enter="transition duration-350 ease-out"
+        x-transition:enter-start="-translate-y-full opacity-0"
+        x-transition:enter-end="translate-y-0 opacity-100"
+        x-transition:leave="transition duration-250 ease-in"
+        x-transition:leave-start="translate-y-0 opacity-100"
+        x-transition:leave-end="-translate-y-full opacity-0"
+        class="fixed inset-x-0 top-0 z-50 flex min-h-screen flex-col bg-white dark:bg-zinc-950 md:hidden"
+    >
+        {{-- Header interne du menu --}}
+        <div class="flex items-center justify-between border-b border-slate-200/80 px-5 py-4 dark:border-zinc-800">
+            <a href="#top" x-on:click="menuOpen = false" class="flex items-center gap-2.5">
+                <span class="grid size-9 place-items-center rounded-lg text-white dark:bg-zinc-50 dark:text-zinc-950">
+                    sqa
+                </span>
+                <span class="text-lg font-black text-slate-950 dark:text-zinc-400">fallabolo</span>
+            </a>
+            <button
+                x-on:click="menuOpen = false"
+                class="grid size-9 place-items-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+                aria-label="Fermer le menu"
+            >
+                <flux:icon.x-mark class="size-5" />
+            </button>
         </div>
 
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
-    </body>
+        {{-- Liens de navigation --}}
+        <nav class="flex flex-1 flex-col px-5 py-8" aria-label="Navigation mobile">
+            <ul class="space-y-1">
+
+                @foreach ([
+                    ['label' => 'Problème',   'href' => '#probleme', 'icon' => 'bug-ant'],
+                    ['label' => 'Solution',     'href' => '#solution',   'icon' => 'face-smile'],
+                    ['label' => 'Fonctionnalités',       'href' => '#fonctionnalites',     'icon' => 'star'],
+                    ['label' => 'MCP',        'href' => '#mcp',      'icon' => 'sparkles'],
+                    ['label' => 'Tarifs',       'href' => '#tarifs', 'icon' => 'credit-card'],
+                ] as $link)
+                    <li>
+                        <a
+                            href="{{ $link['href'] }}"
+                            x-on:click="
+                                menuOpen = false;
+                                $nextTick(() => {
+                                    const el = document.querySelector('{{ $link['href'] }}');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                })
+                            "
+                            class="group flex items-center gap-4 rounded-xl px-4 py-4 text-lg font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-950 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
+                        >
+                            <span class="grid size-9 place-items-center rounded-lg bg-slate-100 text-slate-500 transition group-hover:bg-slate-200 group-hover:text-slate-950 dark:bg-zinc-900 dark:text-zinc-400 dark:group-hover:bg-zinc-800 dark:group-hover:text-zinc-50">
+                                <flux:icon :name="$link['icon']" class="size-5" />
+                            </span>
+                            {{ $link['label'] }}
+                            <flux:icon.arrow-right class="ml-auto size-4 text-slate-300 transition group-hover:translate-x-1 group-hover:text-slate-500 dark:text-zinc-600" />
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+
+            {{-- Séparateur --}}
+            <div class="my-6 border-t border-slate-200 dark:border-zinc-800"></div>
+
+            {{-- CTA principal --}}
+            <a
+                href="#contact"
+                x-on:click="
+                    menuOpen = false;
+                    $nextTick(() => {
+                        const el = document.querySelector('#contact');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    })
+                "
+                class="flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-4 text-base font-black text-white transition hover:bg-slate-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+            >
+
+                Demander une démo gratuite
+            </a>
+
+            <p class="mt-4 text-center text-sm text-slate-400">
+                ✓ Sans engagement &nbsp;·&nbsp; ✓ Réponse sous 24h
+            </p>
+        </nav>
+
+        {{-- Pied du menu --}}
+        <div class="border-t border-slate-200 px-5 py-5 dark:border-zinc-800">
+            <p class="text-center text-sm text-slate-400">contact@fallabolo.com</p>
+        </div>
+    </div>
+
+    {{-- ── Header principal ── --}}
+    <header
+        class="fixed top-0 left-0 right-0 z-40 flex justify-center"
+        :class="scrolled ? 'pt-3' : 'pt-0'"
+    >
+        <nav
+            aria-label="Navigation principale"
+            class="transition-all duration-300 ease-in-out w-full"
+            :class="scrolled
+                ? 'mx-4 max-w-5xl rounded-full border border-slate-200/80 bg-white/90 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-[0_8px_32px_-4px_rgba(0,0,0,0.4)] px-4 py-2'
+                : 'border-b border-slate-200/80 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 px-5 py-4 lg:px-8'"
+        >
+            <div
+                class="flex items-center justify-between transition-all duration-300"
+                :class="scrolled ? 'gap-2' : 'gap-4 mx-auto max-w-7xl'"
+            >
+
+                {{-- Logo --}}
+                <a href="#top" class="flex items-center gap-2.5 shrink-0">
+                    <span
+                        class="grid place-items-center rounded-lg bg-slate-950 text-white dark:bg-zinc-50 dark:text-zinc-950 transition-all duration-300"
+                        :class="scrolled ? 'size-7' : 'size-9'"
+                    >
+                        sq
+                    </span>
+                    <span
+                        class="font-black tracking-normal text-slate-950 dark:text-zinc-400 transition-all duration-300"
+                        :class="scrolled ? 'text-base ' : 'text-lg'"
+                    >fallabolo</span>
+                </a>
+
+                {{-- Liens desktop --}}
+                <div
+                    class="hidden items-center text-slate-600 dark:text-zinc-400 md:flex transition-all duration-300"
+                    :class="scrolled ? 'gap-5 text-sm font-medium' : 'gap-7 text-sm font-semibold'"
+                >
+
+                <a href="#valeur"          :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Proposition de valeur</a>
+    <a href="#probleme"        :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Problème</a>
+    <a href="#solution"        :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Solution</a>
+    <a href="#fonctionnalites" :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Fonctionnalités</a>
+    <a href="#mcp"             :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">MCP</a>
+    <a href="#tarifs"          :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Tarifs</a>
+  <button @click="dark=!dark; localStorage.setItem('theme', dark ? 'dark' : 'light')"
+            class="w-9 h-9 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer"
+            :class="dark ? 'hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/10' : ' hover:border-emerald-500/50 hover:text-emerald-600 hover:bg-emerald-50'">
+      <span x-text="dark ? '🌙' : '☀️'"></span>
+    </button>
+                </div>
+
+                {{-- CTA desktop + burger mobile --}}
+                <div class="flex items-center gap-3 shrink-0">
+
+                    {{-- CTA desktop uniquement --}}
+                    <a
+                        href="#contact"
+                        class="hidden md:inline-flex items-center gap-2 font-semibold text-white bg-slate-950 transition-all duration-300 hover:bg-slate-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+                        :class="scrolled ? 'text-sm px-4 py-1.5 rounded-full' : 'text-sm px-4 py-2 rounded-lg'"
+                    >
+                        Demander une démo
+                    </a>
+
+                    {{-- Burger mobile uniquement --}}
+                    <flux:button
+                        x-on:click="menuOpen = true"
+                        class="grid size-9 place-items-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 md:hidden"
+                        aria-label="Ouvrir le menu"
+                    >
+                        <flux:icon.bars-3 class="size-5" />
+                    </flux:accentbutton>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+</div>
+
+{{-- Spacer fixed header --}}
+<div class="h-[65px]"></div>
+
+
+
+<!-- ===== HERO ===== -->
+<section class="relative pt-32 pb-24 px-5 text-center overflow-hidden">
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
+       style="background:radial-gradient(ellipse,rgba(52,211,153,.13) 0%,transparent 70%)"></div>
+  <div class="absolute inset-0 hero-grid pointer-events-none"></div>
+  <div class="relative max-w-5xl mx-auto">
+
+    <div class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium mb-6"
+         :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+      <span class="px-2 py-0.5 rounded-full text-xs font-bold font-display bg-emerald-400 text-zinc-900">NOUVEAU</span>
+      Matching algorithmique transparent sans CV obligatoire
+    </div>
+
+    <h1 class="reveal d1 font-display font-extrabold leading-[1.06] tracking-tight mb-5" style="font-size:clamp(2.4rem,7vw,4.8rem)">
+      Recrutement sans bruit,<br>
+      <span class="grad-text">matching au mérite</span>
+    </h1>
+
+    <p class="reveal d2 text-lg font-light max-w-xl mx-auto mb-10 leading-relaxed"
+       :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+      Fini le tri manuel de centaines de CVs. MatchRH connecte talents et recruteurs via un scoring structuré, transparent et instantané.
+    </p>
+
+    <div class="reveal d3 flex flex-wrap gap-3 justify-center mb-16">
+      <button class="px-7 py-3.5 rounded-xl font-display font-bold text-zinc-900 bg-emerald-400 hover:bg-emerald-500 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/25">
+        Créer un compte gratuit
+      </button>
+      <button class="px-7 py-3.5 rounded-xl font-medium border transition-all hover:-translate-y-0.5"
+              :class="dark ? 'border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800/50' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50'">
+        Voir la démo  <flux:icon.chevron-right class="size-4 inline-block ml-1"/>
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="reveal d4 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-10 border-t"
+         :class="dark ? 'border-zinc-800' : 'border-zinc-200'">
+      <div class="text-center">
+        <div class="font-display font-extrabold text-2xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">−87%</div>
+        <div class="text-xs mt-1" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Temps de tri</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display font-extrabold text-2xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">4 étapes</div>
+        <div class="text-xs mt-1" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Processus clair</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display font-extrabold text-2xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">100%</div>
+        <div class="text-xs mt-1" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Transparent</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display font-extrabold text-2xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">0 CV</div>
+        <div class="text-xs mt-1" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Requis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== PROPOSITION DE VALEUR ===== -->
+<section id="valeur" class="py-24 px-5 border-y transition-colors duration-300"
+         :class="dark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-white border-zinc-200'">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center mb-14">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        La vérité que personne ne dit
+      </div>
+      <h2 class="font-display font-bold leading-tight mb-4" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Vous passez des heures à soigner votre CV.<br>
+        <span class="grad-text">Les recruteurs le lisent en 6 secondes.</span>
+      </h2>
+      <p class="text-base max-w-lg mx-auto" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+        Ce n'est pas un jugement c'est une réalité structurelle. Avec des centaines de candidatures par poste, personne ne peut lire chaque CV en entier.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-10">
+      <!-- Mythe candidat -->
+      <div class="reveal-l rounded-2xl border p-8 relative overflow-hidden"
+           :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'">
+        <div class="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full border"
+             :class="dark ? 'bg-red-500/15 text-red-400 border-red-500/20' : 'bg-red-50 text-red-600 border-red-200'">
+          Le mythe
+        </div>
+        <h3 class="font-display font-bold text-lg mb-4" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Ce que le candidat croit</h3>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-red-400 shrink-0">✗</span>
+            Peaufiner chaque ligne du CV pendant des heures
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-red-400 shrink-0">✗</span>
+            Écrire une lettre de motivation personnalisée
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-red-400 shrink-0">✗</span>
+            Adapter le format, les mots-clés, la mise en page
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-red-400 shrink-0">✗</span>
+            Attendre… et souvent ne jamais avoir de retour
+          </li>
+        </ul>
+      </div>
+
+      <!-- Réalité recruteur -->
+      <div class="reveal-r rounded-2xl border p-8 relative overflow-hidden"
+           :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'">
+        <div class="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full border"
+             :class="dark ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : 'bg-amber-50 text-amber-600 border-amber-200'">
+          La réalité
+        </div>
+        <h3 class="font-display font-bold text-lg mb-4" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Ce que le recruteur fait vraiment</h3>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-amber-400 shrink-0">!</span>
+            Reçoit 200+ candidatures en 48h pour un seul poste
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-amber-400 shrink-0">!</span>
+            Scanne le CV en 6 secondesshrink-0titre, entreprise, expérience
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-amber-400 shrink-0">!</span>
+            Ignore la lettre de motivation dans 90 % des cas
+          </li>
+          <li class="flex items-start gap-3 text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            <span class="mt-0.5 text-amber-400 shrink-0">!</span>
+            Élimine en masse par manque de temps, pas de critères clairs
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Conclusion MatchRH -->
+    <div class="reveal rounded-2xl border p-8 md:p-12 text-center relative overflow-hidden"
+         :class="dark ? 'bg-emerald-950/40 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+      <div class="absolute inset-0 pointer-events-none"
+           style="background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(52,211,153,.07),transparent)"></div>
+      <div class="relative">
+        <div class="text-xl text-center mb-4">
+        <flux:icon.scale class="size-10  mx-auto"/>
+
+        </div>
+        <h3 class="font-display font-bold text-2xl mb-3" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+          MatchRH rend le jeu équitable
+        </h3>
+        <p class="text-base max-w-lg mx-auto mb-6" :class="dark ? 'text-zinc-400' : 'text-zinc-600'">
+          Vos compétences réelles sont évaluées sur des critères objectifs et structurés pas sur la beauté d'un PDF. Le meilleur profil gagne, pas le meilleur CV designer.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <span class="px-4 py-2 rounded-lg text-sm font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-700'">Compétences notées /5</span>
+          <span class="px-4 py-2 rounded-lg text-sm font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-700'">Expérience vérifiable</span>
+          <span class="px-4 py-2 rounded-lg text-sm font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-700'">Score visible avant candidature</span>
+          <span class="px-4 py-2 rounded-lg text-sm font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-100 border-emerald-300 text-emerald-700'">Pas de biais de présentation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== PROBLÈMES ===== -->
+<section id="probleme" class="py-24 px-5 transition-colors duration-300"
+         :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+  <div class="max-w-5xl mx-auto">
+    <div class="reveal mb-12">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Problème
+      </div>
+      <h2 class="font-display font-bold leading-tight mb-3" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Le recrutement classique est cassé
+      </h2>
+      <p class="text-base max-w-md" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+        Des centaines de candidatures par poste. Des heures perdues à trier des PDFs. MatchRH y met fin.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 rounded-2xl overflow-hidden border"
+         :class="dark ? 'border-zinc-800 bg-zinc-800' : 'border-zinc-200 bg-zinc-200'" style="gap:1px">
+      <div class="p-7 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800/80' : 'bg-white hover:bg-zinc-50'">
+        <div class="w-11 h-11 p-4 rounded-xl flex items-center justify-center text-xl mb-5 border"
+             :class="dark ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-200'">
+            <flux:icon.envelope class="size-8" />
+            </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Candidatures massives et non pertinentes</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Chaque offre attire des dizaines de profils inadaptés, noyant les bons candidats dans la masse.</p>
+      </div>
+      <div class="p-7 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800/80' : 'bg-white hover:bg-zinc-50'">
+        <div class="w-11 h-11 p-4 rounded-xl flex items-center justify-center text-xl mb-5 border"
+             :class="dark ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-200'">
+            <flux:icon.clock class="size-8" />
+            </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Tri manuel chronophage</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Un recruteur passe en moyenne 6 secondes sur un CV. La qualité de la décision est sacrifiée pour la vitesse.</p>
+      </div>
+      <div class="p-7 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800/80' : 'bg-white hover:bg-zinc-50'">
+        <div class="w-11 h-11 p-4 rounded-xl flex items-center justify-center text-xl mb-5 border"
+             :class="dark ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-200'">
+            <flux:icon.document class="size-8" />
+            </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Lettres de motivation jamais lues</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Étape vide de sens, supprimée chez nous. Une perte de temps pour toutes les parties.</p>
+      </div>
+      <div class="p-7 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800/80' : 'bg-white hover:bg-zinc-50'">
+        <div class="w-11 h-11 p-4 rounded-xl flex items-center justify-center text-xl mb-5 border"
+             :class="dark ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-200'">
+            <flux:icon.folder class="size-8" />
+            </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Données non comparables</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Des compétences dispersées dans des PDFs impossibles à comparer objectivement entre candidats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== SOLUTION / PROCESSUS ===== -->
+<section id="solution" class="py-24 px-5 border-y transition-colors duration-300"
+         :class="dark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-white border-zinc-200'">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center mb-10">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Notre solution
+      </div>
+      <h2 class="font-display font-bold leading-tight mb-4" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Matching en 4 étapes,<br><span class="grad-text">score transparent</span>
+      </h2>
+      <p class="text-base max-w-md mx-auto" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+        Un algorithme déterministe. Pas de boîte noire chaque score est expliqué, visible et contestable.
+      </p>
+    </div>
+
+    <!-- Steps -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 rounded-2xl overflow-hidden border mb-16"
+         :class="dark ? 'border-zinc-800 bg-zinc-800' : 'border-zinc-200 bg-zinc-200'" style="gap:1px">
+      <div class="p-6 reveal d1 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800' : 'bg-white hover:bg-zinc-50'">
+        <div class="font-display font-extrabold text-4xl mb-4 grad-text leading-none">01</div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Critères bloquants</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Éliminatoires. Si un critère obligatoire n'est pas rempli, le score tombe à 0 automatiquement.</p>
+      </div>
+      <div class="p-6 reveal d2 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800' : 'bg-white hover:bg-zinc-50'">
+        <div class="font-display font-extrabold text-4xl mb-4 grad-text leading-none">02</div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Score principal pondéré</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">6 dimensions clés (compétences 50 %, expérience 20 %…) combinées en un score sur 100.</p>
+      </div>
+      <div class="p-6 reveal d3 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800' : 'bg-white hover:bg-zinc-50'">
+        <div class="font-display font-extrabold text-4xl mb-4 grad-text leading-none">03</div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Points bonus</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Certifications, compétences rares, langues supplémentaires des points qui distinguent les excellents profils.</p>
+      </div>
+      <div class="p-6 reveal d4 transition-colors" :class="dark ? 'bg-zinc-900 hover:bg-zinc-800' : 'bg-white hover:bg-zinc-50'">
+        <div class="font-display font-extrabold text-4xl mb-4 grad-text leading-none">04</div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Score final en %</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Un chiffre clair, visible avant même de postuler. Le candidat sait. Le recruteur a son classement.</p>
+      </div>
+    </div>
+
+    <!-- Weights + Score preview -->
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- Barres de pondération -->
+      <div class="reveal-l self-center">
+        <p class="text-xs font-bold font-display uppercase tracking-widest mb-5"
+           :class="dark ? 'text-emerald-400' : 'text-emerald-700'">Pondérations fixes & transparentes</p>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Compétences</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="50" style="--w:50%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">50%</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Expérience</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="20" style="--w:20%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">20%</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Formation</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="10" style="--w:10%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">10%</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Langues</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="10" style="--w:10%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">10%</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Disponibilité</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="5" style="--w:5%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">5%</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-sm w-24 shrink-0" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Localisation</div>
+            <div class="flex-1 h-2 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-200'">
+              <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" data-w="5" style="--w:5%"></div>
+            </div>
+            <div class="text-sm font-bold font-display w-9 text-right" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">5%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Score preview -->
+      <div class="reveal-r rounded-2xl border p-6" :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'">
+        <div class="flex items-center justify-between mb-5">
+          <h4 class="font-display font-bold text-sm" :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Compatibilité estimée</h4>
+          <span class="font-display font-extrabold text-4xl grad-text">84%</span>
+        </div>
+        <div class="space-y-3 mb-5">
+          <div class="flex items-center gap-3 text-sm">
+            <span class="text-emerald-400">✓</span>
+            <span class="flex-1" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Compétences</span>
+            <span class="font-medium" :class="dark ? 'text-zinc-200' : 'text-zinc-700'">Excellent</span>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <span class="text-emerald-400">✓</span>
+            <span class="flex-1" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Expérience</span>
+            <span class="font-medium" :class="dark ? 'text-zinc-200' : 'text-zinc-700'">Compatible</span>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <span class="text-emerald-400">✓</span>
+            <span class="flex-1" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Langues</span>
+            <span class="font-medium" :class="dark ? 'text-zinc-200' : 'text-zinc-700'">Compatible</span>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <span class="text-emerald-400">✓</span>
+            <span class="flex-1" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Disponibilité</span>
+            <span class="font-medium" :class="dark ? 'text-zinc-200' : 'text-zinc-700'">Immédiate</span>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <span class="text-emerald-400">✓</span>
+            <span class="flex-1" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Localisation</span>
+            <span class="font-medium" :class="dark ? 'text-zinc-200' : 'text-zinc-700'">Compatible</span>
+          </div>
+        </div>
+        <div class="pt-4 border-t" :class="dark ? 'border-zinc-800' : 'border-zinc-200'">
+          <p class="text-xs mb-2" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Bonus cumulés</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">+5 Sage Paie</span>
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">+3 Excel avancé</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== FONCTIONNALITÉS ===== -->
+<section id="fonctionnalites" class="py-24 px-5 transition-colors duration-300"
+         :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center mb-14">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Fonctionnalités
+      </div>
+      <h2 class="font-display font-bold leading-tight" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Tout ce dont vous avez besoin,<br>rien de superflu
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="reveal d1 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.hand-raised class="size-8"/>
+        </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Critères bloquants configurables</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Définissez vos exigences non-négociables. Tout le reste est auto-filtré avant même l'envoi de la candidature.</p>
+      </div>
+      <div class="reveal d2 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.star class="size-8"/>
+        </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Système de bonus flexible</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Récompensez les compétences différenciantes avec des points bonus cumulables certifications, langues rares, expertises.</p>
+      </div>
+      <div class="reveal d3 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.chart-pie class="size-8"/>
+        </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Classement automatique</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Les candidats arrivent déjà classés du plus compatible au moins compatible. Zéro tri manuel nécessaire.</p>
+      </div>
+      <div class="reveal d1 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.eye class="size-8"/>
+        </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Score visible avant candidature</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Le candidat voit sa compatibilité avant de postuler. Il s'auto-sélectionne moins de candidatures, bien meilleures.</p>
+      </div>
+      <div class="reveal d2 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.bell class="size-8"/>
+    </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Notifications temps réel</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Alertes instantanées à chaque candidature qualifiée. Résumés périodiques de l'activité de vos offres.</p>
+      </div>
+      <div class="reveal d3 p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 cursor-default"
+           :class="dark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80' : 'bg-white border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+        <flux:icon.sparkles class="size-8"/>
+        </div>
+        <h3 class="font-display font-bold text-sm mb-2" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Recommandations IA</h3>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Le système suggère proactivement des profils aux recruteurs et des offres adaptées aux candidats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MCP INTEGRATION ===== -->
+<section id="mcp" class="py-24 px-5 border-y transition-colors duration-300"
+         :class="dark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-white border-zinc-200'">
+  <div class="max-w-5xl mx-auto">
+    <div class="reveal rounded-2xl border overflow-hidden relative"
+         :class="dark ? 'border-emerald-500/20' : 'border-emerald-300/60'">
+      <div class="absolute inset-0 mcp-shimmer pointer-events-none"></div>
+      <div class="relative p-8 md:p-12">
+        <div class="flex flex-col lg:flex-row gap-10 items-start">
+
+          <!-- Texte -->
+          <div class="flex-1 self-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-5"
+                 :class="dark ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-700'">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-slow"></span>
+              Prochainement · MCP Integration
+            </div>
+            <h2 class="font-display font-bold leading-tight mb-4" style="font-size:clamp(1.5rem,3.5vw,2.25rem)"
+                :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+              MatchRH dans votre<br>
+              <span class="grad-text">IA préférée</span>
+            </h2>
+            <p class="text-base leading-relaxed mb-6" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+              Bientôt, recruteurs et candidats pourront interagir avec MatchRH directement depuis leurs outils IA (Claude, ChatGPT, Cursor, Copilot…) via le protocole <strong :class="dark ? 'text-zinc-200 font-semibold' : 'text-zinc-700 font-semibold'">MCP (Model Context Protocol)</strong>. Publiez des offres, consultez vos scores et recevez des recommandations sans quitter votre environnement de travail.
+            </p>
+
+            <div class="grid sm:grid-cols-2 gap-3 mb-8">
+              <div class="flex items-start gap-3 p-4 rounded-xl border"
+                   :class="dark ? 'bg-zinc-900/80 border-zinc-800' : 'bg-white border-zinc-200'">
+                <span class="text-lg shrink-0">
+                      <flux:icon.sparkles class="size-8"/>
+
+                </span>
+                <div>
+                  <p class="text-sm font-semibold" :class="dark ? 'text-zinc-200' : 'text-zinc-800'">Commandes en langage naturel</p>
+                  <p class="text-xs mt-0.5" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">"Trouve les 3 meilleurs profils Laravel disponibles sous 30 jours"</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 rounded-xl border"
+                   :class="dark ? 'bg-zinc-900/80 border-zinc-800' : 'bg-white border-zinc-200'">
+                <span class="text-lg shrink-0">
+                      <flux:icon.chart-bar class="size-8"/>
+
+                </span>
+                <div>
+                  <p class="text-sm font-semibold" :class="dark ? 'text-zinc-200' : 'text-zinc-800'">Scores & recommandations</p>
+                  <p class="text-xs mt-0.5" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Classements disponibles directement depuis votre assistant IA</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 rounded-xl border"
+                   :class="dark ? 'bg-zinc-900/80 border-zinc-800' : 'bg-white border-zinc-200'">
+                <span class="text-lg shrink-0">
+
+                    <flux:icon.document class="size-8"/>
+
+                </span>
+                <div>
+                  <p class="text-sm font-semibold" :class="dark ? 'text-zinc-200' : 'text-zinc-800'">Création d'offres via l'IA</p>
+                  <p class="text-xs mt-0.5" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Publiez une offre structurée en décrivant le poste à votre IA</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-4 rounded-xl border"
+                   :class="dark ? 'bg-zinc-900/80 border-zinc-800' : 'bg-white border-zinc-200'">
+                   <span class="text-lg shrink-0">
+                       <flux:icon.star class="size-8"/>
+
+                </span>
+                <div>
+                  <p class="text-sm font-semibold" :class="dark ? 'text-zinc-200' : 'text-zinc-800'">Alertes contextuelles</p>
+                  <p class="text-xs mt-0.5" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Notifications dans votre outil habituel, sans changer d'application</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 items-center">
+              <button class="px-5 py-2.5 rounded-xl font-display font-bold text-sm bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all">
+                M'avertir à la sortie
+              </button>
+              <a href="#" class="text-sm underline underline-offset-4 decoration-dashed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+                En savoir plus sur MCP  <flux:icon.chevron-right class="size-4 inline-block ml-1"/>
+              </a>
+            </div>
+          </div>
+
+          <!-- Code block -->
+        <div class="shrink-0 flex  self-center">
+  <div class="rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl font-mono text-xs text-zinc-300">
+
+    <div class="flex items-center gap-2 px-4 py-3 bg-zinc-900/50 border-b border-zinc-800 select-none">
+      <div class="flex gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-red-500/80 block"></span>
+        <span class="w-3 h-3 rounded-full bg-amber-500/80 block"></span>
+        <span class="w-3 h-3 rounded-full bg-emerald-500/80 block"></span>
+      </div>
+      <span class="ml-2 text-zinc-500 text-[11px]">matchrh-mcp.ts</span>
+    </div>
+
+    <div class="p-5 overflow-x-auto space-y-1">
+      <div class="text-zinc-500">// Connexion MCP MatchRH</div>
+      <div><span class="text-emerald-400">import</span> { MatchRH } <span class="text-emerald-400">from</span> <span class="text-amber-300">'matchrh-mcp'</span></div>
+      <div class="h-2"></div>
+      <div class="text-zinc-500">// Demander les top candidats</div>
+      <div><span class="text-emerald-400">const</span> results = <span class="text-emerald-400">await</span> MatchRH.getTopCandidates({</div>
+      <div class="pl-4">offreId: <span class="text-amber-300">'dev-laravel-001'</span>,</div>
+      <div class="pl-4">limit: <span class="text-blue-400">5</span></div>
+      <div>})</div>
+      <div class="text-zinc-500">// [{ name: 'Jean', score: 92% },</div>
+      <div class="text-zinc-500">//  { name: 'Marie', score: 89% }]</div>
+    </div>
+
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== UTILISATEURS ===== -->
+<section id="utilisateurs" class="py-24 px-5 transition-colors duration-300"
+         :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center mb-14">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Utilisateurs
+      </div>
+      <h2 class="font-display font-bold leading-tight" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Deux profils, une même plateforme
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5 mb-8">
+      <!-- Recruteur -->
+      <div class="reveal-l rounded-2xl border overflow-hidden" :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'">
+        <div class="flex items-center gap-3 p-5 border-b" :class="dark ? 'border-zinc-800' : 'border-zinc-100'">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl border" :class="dark ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-200'">        <flux:icon.building-office class="size-8"/></div>
+          <div>
+            <p class="font-display font-bold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Recruteur</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Entreprises & DRH</p>
+          </div>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Publie des offres structurées avec critères bloquants & bonus</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Reçoit uniquement des candidatures qualifiées, classées automatiquement</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Définit les critères éliminatoires (permis, expérience minimum…)</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Accède au résumé structuré de chaque candidat avec son score</span></div>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-zinc-800 border-zinc-700 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-600'">Classement auto</span>
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-zinc-800 border-zinc-700 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-600'">Critères bloquants</span>
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-zinc-800 border-zinc-700 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-600'">Points bonus</span>
+            <span class="px-3 py-1 rounded-lg text-xs font-medium border" :class="dark ? 'bg-zinc-800 border-zinc-700 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-600'">Notifs temps réel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Candidat -->
+      <div class="reveal-r rounded-2xl border overflow-hidden" :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'">
+        <div class="flex items-center gap-3 p-5 border-b" :class="dark ? 'border-zinc-800' : 'border-zinc-100'">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">        <flux:icon.users class="size-8"/></div>
+          <div>
+            <p class="font-display font-bold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Candidat</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Chercheurs d'emploi</p>
+          </div>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Crée un profil structuré sans CV obligatoire</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Voit son score de compatibilité avant de postuler</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Répond aux questions de préqualification spécifiques</span></div>
+          <div class="flex gap-3 text-sm"><span class="shrink-0 text-emerald-400 mt-0.5">→</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Reçoit des recommandations d'offres adaptées à son profil</span></div>
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center gap-3 text-xs">
+              <span class="w-14 shrink-0" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Laravel</span>
+              <span class="text-emerald-400">★★★★★</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="w-14 shrink-0" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">MySQL</span>
+              <span class="text-emerald-400">★★★★</span><span :class="dark ? 'text-zinc-700' : 'text-zinc-200'">★</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="w-14 shrink-0" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Git</span>
+              <span class="text-emerald-400">★★★</span><span :class="dark ? 'text-zinc-700' : 'text-zinc-200'">★★</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classement table -->
+    <div class="reveal rounded-2xl border overflow-hidden" :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'">
+      <div class="flex items-center justify-between p-5 border-b" :class="dark ? 'border-zinc-800' : 'border-zinc-100'">
+        <h4 class="font-display font-bold text-sm" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Classement · Développeur Laravel</h4>
+        <span class="px-3 py-1 rounded-lg text-xs font-bold border" :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">Classement automatique ✓</span>
+      </div>
+      <!-- Ligne 1 -->
+      <div class="flex items-center justify-between p-4 border-b transition-colors" :class="dark ? 'border-zinc-800 hover:bg-zinc-800/50' : 'border-zinc-100 hover:bg-zinc-50'">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border" style="background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.3);color:#818cf8">JD</div>
+          <div>
+            <p class="text-sm font-semibold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Jean Dupont</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Dev Full Stack · 5 ans</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block w-20 h-1.5 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-100'">
+            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" style="width:92%"></div>
+          </div>
+          <span class="font-display font-bold text-sm" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">92%</span>
+        </div>
+      </div>
+      <!-- Ligne 2 -->
+      <div class="flex items-center justify-between p-4 border-b transition-colors" :class="dark ? 'border-zinc-800 hover:bg-zinc-800/50' : 'border-zinc-100 hover:bg-zinc-50'">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25);color:#4ade80">MK</div>
+          <div>
+            <p class="text-sm font-semibold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Marie Kamga</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Dev Laravel · 4 ans</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block w-20 h-1.5 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-100'">
+            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" style="width:89%"></div>
+          </div>
+          <span class="font-display font-bold text-sm" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">89%</span>
+        </div>
+      </div>
+      <!-- Ligne 3 -->
+      <div class="flex items-center justify-between p-4 border-b transition-colors" :class="dark ? 'border-zinc-800 hover:bg-zinc-800/50' : 'border-zinc-100 hover:bg-zinc-50'">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);color:#fbbf24">AB</div>
+          <div>
+            <p class="text-sm font-semibold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Alain Bello</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Dev Backend · 3 ans</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block w-20 h-1.5 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-100'">
+            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" style="width:85%"></div>
+          </div>
+          <span class="font-display font-bold text-sm" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">85%</span>
+        </div>
+      </div>
+      <!-- Ligne 4 -->
+      <div class="flex items-center justify-between p-4 transition-colors" :class="dark ? 'hover:bg-zinc-800/50' : 'hover:bg-zinc-50'">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 border" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);color:#f87171">SN</div>
+          <div>
+            <p class="text-sm font-semibold" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Sophie Ngo</p>
+            <p class="text-xs" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Dev PHP · 2 ans</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block w-20 h-1.5 rounded-full overflow-hidden" :class="dark ? 'bg-zinc-800' : 'bg-zinc-100'">
+            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" style="width:78%"></div>
+          </div>
+          <span class="font-display font-bold text-sm" :class="dark ? 'text-emerald-400' : 'text-emerald-600'">78%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== TARIFS ===== -->
+<section id="tarifs" class="py-24 px-5 border-y transition-colors duration-300"
+         :class="dark ? 'bg-zinc-900/40 border-zinc-800' : 'bg-white border-zinc-200'">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center mb-6">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Tarifs
+      </div>
+      <h2 class="font-display font-bold leading-tight mb-3" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        100% Gratuit.<br>
+        <span class="grad-text">Et c'est notre force.</span>
+      </h2>
+      <p class="text-base max-w-lg mx-auto" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+        Pas de freemium, pas de fonctionnalités cachées derrière un paywall. La gratuité totale est notre avantage concurrentiel elle nous permet d'atteindre une masse critique de candidats et de recruteurs plus vite que n'importe quel concurrent.
+      </p>
+    </div>
+
+    <!-- Argument marketing -->
+    <div class="reveal my-8 p-5 rounded-2xl border flex gap-4 items-start"
+         :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-50 border-zinc-200'">
+      <span class="text-2xl shrink-0">        <flux:icon.light-bulb class="size-8"/></span>
+      <div>
+        <p class="font-display font-bold text-sm mb-1" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Notre avantage stratégique</p>
+        <p class="text-sm leading-relaxed" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+          Les plateformes payantes créent une barrière les meilleurs talents ne paient pas pour chercher un emploi, et les PME ne paient pas pour recruter des profils incertains. En étant entièrement gratuit, MatchRH agrège le marché plus vite, crée de la valeur pour tous, et construit la réputation qui fera sa pérennité.
+        </p>
+      </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="grid sm:grid-cols-3 gap-5 mt-10">
+
+      <!-- Candidat -->
+      <div class="price-card reveal d1 rounded-2xl border overflow-hidden flex flex-col"
+           :class="dark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-200 bg-white'">
+        <div class="p-6 flex flex-col flex-1">
+          <p class="font-display font-bold text-sm mb-1" :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Candidat</p>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="font-display font-extrabold text-4xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Gratuit</span>
+          </div>
+          <p class="text-xs mb-6" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Pour tous les chercheurs d'emploi</p>
+          <div class="space-y-3 flex-1 mb-6">
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Profil structuré complet</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Score de compatibilité visible</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Candidatures illimitées</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Recommandations d'offres</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Notifications en temps réel</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">CV optionnel (pas requis)</span></div>
+          </div>
+          <button class="w-full py-3 rounded-xl font-display font-bold text-sm border transition-all"
+                  :class="dark ? 'border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50'">
+            Créer mon profil
+          </button>
+        </div>
+      </div>
+
+      <!-- Recruteur PMEshrink-0Featured -->
+      <div class="price-card reveal d2 rounded-2xl border overflow-hidden flex flex-col"
+           :class="dark ? 'border-emerald-500/40 bg-emerald-950/40' : 'border-emerald-300 bg-emerald-50/60'">
+        <div class="py-2 text-center text-xs font-bold font-display tracking-widest uppercase"
+             :class="dark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'">
+          ⭐ Le plus populaire
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <p class="font-display font-bold text-sm mb-1" :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Recruteur PME</p>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="font-display font-extrabold text-4xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Gratuit</span>
+          </div>
+          <p class="text-xs mb-6" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">La solution complète sans limite</p>
+          <div class="space-y-3 flex-1 mb-6">
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Offres d'emploi illimitées</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Critères bloquants & bonus</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Classement automatique des candidats</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Notifications & résumés périodiques</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Tableau de bord recruteur</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Support prioritaire</span></div>
+          </div>
+          <button class="w-full py-3 rounded-xl font-display font-bold text-sm bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all">
+            Commencer à recruter
+          </button>
+        </div>
+      </div>
+
+      <!-- Entreprise -->
+      <div class="price-card reveal d3 rounded-2xl border overflow-hidden flex flex-col"
+           :class="dark ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-200 bg-white'">
+        <div class="p-6 flex flex-col flex-1">
+          <p class="font-display font-bold text-sm mb-1" :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Entreprise</p>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="font-display font-extrabold text-4xl" :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Gratuit</span>
+          </div>
+          <p class="text-xs mb-6" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">Fonctionnalités avancées à venir</p>
+          <div class="space-y-3 flex-1 mb-6">
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Tout Recruteur PME inclus</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Multi-utilisateurs & équipes RH</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400">✓</span><span :class="dark ? 'text-zinc-300' : 'text-zinc-600'">Statistiques & reporting avancé</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400 text-xs">🔜</span><span :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Intégration MCP (à venir)</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400 text-xs">🔜</span><span :class="dark ? 'text-zinc-400' : 'text-zinc-500'">API privée & webhooks (à venir)</span></div>
+            <div class="flex items-start gap-2.5 text-sm"><span class="shrink-0 mt-0.5 text-emerald-400 text-xs">🔜</span><span :class="dark ? 'text-zinc-400' : 'text-zinc-500'">Account manager dédié (à venir)</span></div>
+          </div>
+          <button class="w-full py-3 rounded-xl font-display font-bold text-sm border transition-all"
+                  :class="dark ? 'border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50'">
+            Rejoindre la liste d'attente
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust badges -->
+    <div class="reveal mt-10 flex flex-wrap justify-center gap-5 text-sm" :class="dark ? 'text-zinc-500' : 'text-zinc-400'">
+      <span>✓ Aucune carte bancaire requise</span>
+      <span>✓ Aucune limite cachée</span>
+      <span>✓ Données protégées (Loi camerounaise 2024)</span>
+      <span>✓ Gratuit pour toujours sur les offres de base</span>
+    </div>
+  </div>
+</section>
+
+
+{{-- ═══════════════════════════════════════════════════
+     TÉMOIGNAGES scroll-snap mobile / carousel JS desktop
+═══════════════════════════════════════════════════ --}}
+<section
+    id="avis"
+    class="overflow-hidden bg-white py-16 dark:bg-zinc-950 sm:py-20"
+    x-data="testimonialCarousel()"
+    x-init="init()"
+>
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+        {{-- ── En-tête ── --}}
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="max-w-xl">
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:bg-emerald-400/20 dark:text-emerald-300">
+                    <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                    Ils avancent avec Squarhe
+                </span>
+                <h2 class="mt-4 text-2xl font-black leading-tight text-slate-950 dark:text-zinc-300 sm:text-3xl lg:text-4xl">
+                    Des PME camerounaises qui ont remplacé Excel.
+                </h2>
+            </div>
+
+            {{-- Contrôles masqués sur mobile (scroll natif suffit) --}}
+            <div class="hidden items-center gap-2 sm:flex">
+                <button x-on:click="prev()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" aria-label="Précédent">
+                    <svg class="size-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
+                </button>
+                <button x-on:click="togglePause()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" :aria-label="paused ? 'Reprendre' : 'Pause'">
+                    <svg x-show="!paused" class="size-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75A.75.75 0 0 0 7.25 3h-1.5ZM12.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75a.75.75 0 0 0-.75-.75h-1.5Z"/></svg>
+                    <svg x-show="paused" class="size-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6.3 2.84A1.5 1.5 0 0 0 4 4.11v11.78a1.5 1.5 0 0 0 2.3 1.27l9.344-5.891a1.5 1.5 0 0 0 0-2.538L6.3 2.84Z"/></svg>
+                </button>
+                <button x-on:click="next()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" aria-label="Suivant">
+                    <svg class="size-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                </button>
+                <span class="ml-1 text-sm font-bold tabular-nums text-slate-400 dark:text-zinc-500">
+                    <span x-text="current + 1"></span><span class="text-slate-300 dark:text-zinc-700">/</span><span x-text="total"></span>
+                </span>
+            </div>
+        </div>
+
+        {{-- ══════════════════════════════════════════
+             MOBILE : scroll snap natif (< sm)
+        ══════════════════════════════════════════ --}}
+        <div class="mt-8 sm:hidden">
+            <div
+                class="flex gap-3 overflow-x-auto pb-2"
+                style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;"
+                x-ref="mobileTrack"
+            >
+                @php
+                $testimonials_data = [
+                    ['name' => 'Ariane M.', 'role' => 'Directrice administrative', 'location' => 'Douala', 'sector' => 'Cabinet d\'architecture', 'result' => 'La validation de paie prend maintenant 20 minutes, contre 2 jours avant.', 'quote' => 'Squarhe nous donne une vision claire de la paie avant validation. Les équipes gagnent du temps sans perdre le contrôle.'],
+                    ['name' => 'Patrick N.', 'role' => 'Fondateur', 'location' => 'Yaoundé', 'sector' => 'PME services', 'result' => 'Zéro oubli de variable depuis que nous utilisons Squarhe.', 'quote' => 'La plateforme a transformé nos fins de mois. Les variables sont suivies, les oublis diminuent et les bulletins partent plus vite.'],
+                    ['name' => 'Nadia E.', 'role' => 'Responsable RH', 'location' => 'Douala', 'sector' => 'Distribution', 'result' => 'Les demandes de congés sont traitées en 1 clic au lieu de passer par WhatsApp.', 'quote' => 'J\'aime la simplicité de Squarhe. Les collaborateurs comprennent leurs espaces et les managers suivent les demandes sans relance.'],
+                    ['name' => 'Brice T.', 'role' => 'Gérant', 'location' => 'Bafoussam', 'sector' => 'Commerce', 'result' => 'Un historique CNPS propre et accessible en quelques secondes.', 'quote' => 'On a remplacé les fichiers dispersés par une base fiable. Les contrôles sont plus rapides et les décisions plus sereines.'],
+                    ['name' => 'Mireille K.', 'role' => 'Office Manager', 'location' => 'Douala', 'sector' => 'BTP', 'result' => 'Notre équipe de 30 personnes gérée sans service RH dédié.', 'quote' => 'Squarhe nous aide à rester organisés même avec une petite équipe RH. Tout est lisible et accessible au bon moment.'],
+                    ['name' => 'Samuel F.', 'role' => 'CEO', 'location' => 'Yaoundé', 'sector' => 'Agence digitale', 'result' => 'La paie automatisée sans perdre la main sur les validations importantes.', 'quote' => 'La vision produit est excellente : automatiser la paie tout en gardant l\'humain au centre des validations importantes.'],
+                    ['name' => 'Clarisse B.', 'role' => 'Comptable', 'location' => 'Douala', 'sector' => 'Services financiers', 'result' => 'Je vois en temps réel l\'impact de chaque variable sur la masse salariale.', 'quote' => 'Les impacts en temps réel sur la paie sont rassurants. Je vois tout de suite ce qui change et pourquoi.'],
+                    ['name' => 'Eric D.', 'role' => 'Directeur Général', 'location' => 'Douala', 'sector' => 'Industrie légère', 'result' => 'Une discipline RH qu\'on n\'arrivait pas à installer avec Excel.', 'quote' => 'Squarhe apporte une discipline RH qui manquait à notre croissance. C\'est simple, structuré et très concret.'],
+                    ['name' => 'Joëlle S.', 'role' => 'Chargée d\'administration', 'location' => 'Limbé', 'sector' => 'ONG', 'result' => 'Retrouver un contrat ou un bulletin prend 10 secondes, pas 10 minutes.', 'quote' => 'Les documents RH sont enfin centralisés. Nous retrouvons les contrats et bulletins sans fouiller dans plusieurs dossiers.'],
+                    ['name' => 'Marc L.', 'role' => 'DAF', 'location' => 'Douala', 'sector' => 'Import-Export', 'result' => 'Zéro retard sur nos déclarations CNPS cette année.', 'quote' => 'La conformité est mieux suivie et les mises à jour rassurent la direction. C\'est un vrai gain de fiabilité.'],
+                    ['name' => 'Kevin O.', 'role' => 'Entrepreneur', 'location' => 'Kribi', 'sector' => 'Hôtellerie', 'result' => 'La paie de 45 saisonniers gérée sans stress ni erreur.', 'quote' => 'Squarhe rend la paie moins stressante. Les processus sont guidés et les erreurs deviennent beaucoup plus faciles à détecter.'],
+                    ['name' => 'Oscar W.', 'role' => 'Fondateur', 'location' => 'Douala', 'sector' => 'Cabinet conseil', 'result' => 'Un outil qui connaît la CNPS, le Code du travail camerounais et nos réalités.', 'quote' => 'Squarhe comprend les réalités locales. Ce n\'est pas un outil générique plaqué sur nos contraintes.'],
+                ];
+                @endphp
+
+                {{-- Padding left pour que la première card soit bien centrée --}}
+                <div class="w-5 shrink-0"></div>
+
+                @foreach ($testimonials_data as $t)
+                    <div
+                        class="flex w-[85vw] shrink-0 flex-col rounded-2xl border border-slate-200/80 bg-slate-50 p-5 dark:border-zinc-800 dark:bg-zinc-900"
+                        style="scroll-snap-align: center;"
+                    >
+                        <div class="flex items-center gap-0.5" aria-label="5 étoiles">
+                            @for ($s = 0; $s < 5; $s++)
+                                <svg class="size-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+                            @endfor
+                        </div>
+                        <div class="mt-4 inline-flex items-start gap-2 rounded-lg bg-emerald-100/80 px-3 py-2 dark:bg-emerald-400/10">
+                            <svg class="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>
+                            <p class="text-xs font-bold leading-5 text-emerald-800 dark:text-emerald-300">{{ $t['result'] }}</p>
+                        </div>
+                        <p class="mt-4 flex-1 text-sm leading-7 text-slate-600 dark:text-zinc-400">"{{ $t['quote'] }}"</p>
+                        <div class="mt-5 flex items-center gap-3 border-t border-slate-200/80 pt-4 dark:border-zinc-800">
+                            <div class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-200 text-sm font-black text-slate-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                {{ mb_substr($t['name'], 0, 1) }}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-black text-slate-950 dark:text-zinc-400">{{ $t['name'] }}</p>
+                                <p class="truncate text-xs text-slate-500 dark:text-zinc-400">{{ $t['role'] }} · {{ $t['sector'] }}</p>
+                            </div>
+                            <span class="ml-auto shrink-0 text-xs text-slate-400">📍 {{ $t['location'] }}</span>
+                        </div>
+                    </div>
+                @endforeach
+
+                <div class="w-5 shrink-0"></div>
+            </div>
+
+            {{-- Indicateur swipe --}}
+            <p class="mt-3 text-center text-xs text-slate-400 dark:text-zinc-500">← Glissez pour voir plus →</p>
+        </div>
+
+        {{-- ══════════════════════════════════════════
+             DESKTOP : carousel JS (sm+)
+        ══════════════════════════════════════════ --}}
+        <div class="relative mt-10 hidden overflow-hidden sm:block">
+            <div
+            data-carousel-track
+                class="flex transition-transform duration-700 ease-in-out will-change-transform"
+                :style="`transform: translateX(-${current * (100 / visibleCount)}%)`"
+            >
+                @foreach ($testimonials_data as $t)
+                    <div
+                        class="shrink-0 px-2"
+                        :style="`width: ${100 / visibleCount}%`"
+                        style="width: 50%"
+                    >
+                        <div class="flex h-full flex-col rounded-2xl border border-slate-200/80 bg-slate-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                            <div class="flex items-center gap-0.5" aria-label="5 étoiles">
+                                @for ($s = 0; $s < 5; $s++)
+                                    <svg class="size-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+                                @endfor
+                            </div>
+                            <div class="mt-4 inline-flex items-start gap-2 rounded-lg bg-emerald-100/80 px-3 py-2 dark:bg-emerald-400/10">
+                                <svg class="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>
+                                <p class="text-xs font-bold leading-5 text-emerald-800 dark:text-emerald-300">{{ $t['result'] }}</p>
+                            </div>
+                            <p class="mt-4 flex-1 text-sm leading-7 text-slate-600 dark:text-zinc-400">"{{ $t['quote'] }}"</p>
+                            <div class="mt-5 flex items-center gap-3 border-t border-slate-200/80 pt-4 dark:border-zinc-800">
+                                <div class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-200 text-sm font-black text-slate-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                    {{ mb_substr($t['name'], 0, 1) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-black text-slate-950 dark:text-zinc-400">{{ $t['name'] }}</p>
+                                    <p class="truncate text-xs text-slate-500 dark:text-zinc-400">{{ $t['role'] }} · {{ $t['sector'] }}</p>
+                                </div>
+                                <span class="ml-auto shrink-0 text-xs text-slate-400">📍 {{ $t['location'] }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Fades latéraux --}}
+            <div class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white to-transparent dark:from-zinc-950"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent dark:from-zinc-950"></div>
+        </div>
+
+        {{-- Dots desktop --}}
+        <div class="mt-6 hidden items-center justify-center gap-1.5 sm:flex">
+            @foreach ($testimonials_data as $i => $t)
+                <button
+                    x-on:click="goTo({{ $i }})"
+                    class="rounded-full transition-all duration-300"
+                    :class="{{ $i }} === current ? 'w-6 h-2 bg-slate-950 dark:bg-zinc-50' : 'size-2 bg-slate-300 hover:bg-slate-400 dark:bg-zinc-700/60'"
+                    aria-label="Témoignage {{ $i + 1 }}"
+                ></button>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+
+   {{-- ═══════════════════════════════════════════════════
+                     FAQ Réponses enrichies
+                ═══════════════════════════════════════════════════ --}}
+                <section id="faq" class="border-y border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+                    <div class="mx-auto max-w-4xl px-5 py-12 sm:py-16 lg:px-8">
+                        <div class="text-left sm:text-center">
+                            <p class="text-sm font-black uppercase text-emerald-700">Foire aux questions</p>
+                            <h2 class="mt-3 text-2xl font-black leading-tight text-slate-950 sm:text-4xl">Tout ce que vous voulez savoir avant de nous contacter.</h2>
+                        </div>
+                        <div class="mt-8 space-y-3 sm:mt-10">
+                            @foreach ($faqs as $index => $faq)
+                                <details class="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:open:bg-zinc-800 sm:p-5" @if ($index === 0) open @endif>
+                                    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 font-black text-slate-950 dark:text-zinc-400 sm:gap-5">
+                                        <span>{{ $faq['question'] }}</span>
+                                        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-200 text-slate-700 transition group-open:rotate-45 dark:bg-zinc-800 dark:text-zinc-200"><flux:icon.plus class="size-4" /></span>
+                                    </summary>
+                                    <p class="mt-4 leading-8 text-slate-600 dark:text-zinc-400">{{ $faq['answer'] }}</p>
+                                </details>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                            <p class="font-bold text-slate-700 dark:text-zinc-400">Vous avez une question spécifique à votre situation ?</p>
+                            <flux:button href="#contact" variant="primary" class="mt-4">
+                                Parlez-nous de votre PME
+                            </flux:button>
+                        </div>
+                    </div>
+                </section>
+<!-- ===== CTA ===== -->
+<section class="py-24 px-5 transition-colors duration-300" :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+  <div class="max-w-5xl mx-auto">
+    <div class="reveal relative rounded-3xl border overflow-hidden p-10 md:p-16 text-center"
+         :class="dark ? 'bg-emerald-950/40 border-emerald-500/20' : 'bg-emerald-50 border-emerald-200'">
+      <div class="absolute inset-0 pointer-events-none"
+           style="background:radial-gradient(ellipse 60% 80% at 50% 100%,rgba(52,211,153,.09),transparent)"></div>
+      <div class="relative">
+        <h2 class="font-display font-extrabold leading-tight mb-4" style="font-size:clamp(1.8rem,5vw,3.2rem)"
+            :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+          Prêt à recruter<br>
+          <span class="grad-text">sans friction ?</span>
+        </h2>
+        <p class="text-base max-w-md mx-auto mb-8" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+          Rejoignez la plateforme qui met fin au tri manuel. Commencez gratuitement dès maintenant aucune carte bancaire requise.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <button class="px-8 py-3.5 rounded-xl font-display font-bold bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/20">
+            Créer un compte gratuit
+          </button>
+          <button class="px-8 py-3.5 rounded-xl font-medium border transition-all hover:-translate-y-0.5"
+                  :class="dark ? 'border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800/50' : 'border-zinc-300 text-zinc-600 hover:border-zinc-400 hover:bg-white'">
+            Parler à un expert  <flux:icon.chevron-right class="size-4 inline-block ml-1"/>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== FOOTER ===== -->
+ <footer   :class="dark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-white border-zinc-200'">
+                <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+                    {{-- ── Colonnes de liens ── --}}
+                    <div class="grid grid-cols-2 gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
+
+                        {{-- Produit --}}
+                        <div>
+                            <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Produit</p>
+                            <ul class="mt-4 space-y-3">
+                                @foreach ([
+                                    ['label' => 'Tarifs',        'href' => '#offres'],
+                                    ['label' => 'Solution',      'href' => '#solution'],
+                                    ['label' => 'Fonctionnalités','href' => '#solution'],
+                                    ['label' => 'Sécurité',      'href' => '#securite'],
+                                ] as $link)
+                                    <li>
+                                        <a href="{{ $link['href'] }}" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                            {{ $link['label'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+
+                        {{-- Légal --}}
+                        <div>
+                            <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Légal</p>
+                            <ul class="mt-4 space-y-3">
+                                @foreach ([
+                                    ['label' => 'CGU',               'route' => 'legal.cgu'],
+                                    ['label' => 'CGV',               'route' => 'legal.cgv'],
+                                    ['label' => 'Code du travail','route' => 'legal.travail'],
+                                    ['label' => 'Politique de cookies','route' => 'legal.cookies'],
+                                ] as $link)
+                                    <li>
+                                        {{-- {{ route($link['route']) }} --}}
+                                        <a href="#" wire:navigate class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                            {{ $link['label'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        {{-- Contact --}}
+                        <div>
+                            <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Contact</p>
+                            <ul class="mt-4 space-y-3">
+                                <li>
+                                    <a href="#contact" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                        Demander une démo
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="mailto:contact@fallabolo.com" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                        contact@fallabolo.com
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#newsletter" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                        Newsletter RH
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                        {{-- Ressources --}}
+                        <div>
+                            <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Ressources</p>
+                            <ul class="mt-4 space-y-3">
+                                @foreach ([
+                                    ['label' => 'FAQ',            'href' => '#faq'],
+                                    ['label' => 'Témoignages',    'href' => '#avis'],
+                                ] as $link)
+                                    <li>
+                                        <a href="{{ $link['href'] }}" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                            {{ $link['label'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
+                    {{-- ── Barre inférieure : logo + copyright + réseaux ── --}}
+                    <div class="border-t border-slate-100 py-6 dark:border-zinc-800">
+
+                        {{-- Ligne logo + statut --}}
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+                            {{-- Logo --}}
+                            <a href="#top" class="flex items-center gap-3">
+                                <span class="grid size-8 place-items-center rounded-lg bg-slate-950 text-white dark:bg-zinc-50 dark:text-zinc-950">
+                                    sq
+                                </span>
+                                <span class="text-base font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'"" >fallabolo</span>
+                            </a>
+
+                            {{-- Statut opérationnel --}}
+                            <div class="">
+                            <div class="flex items-center gap-2">
+                                <span class="size-2 rounded-full bg-emerald-500"></span>
+                                <span class="text-sm font-semibold text-slate-500 dark:text-zinc-400">Tous les services sont opérationnels</span>
+                            </div>
+                            </div>
+
+                        </div>
+
+                        {{-- Ligne copyright + réseaux sociaux --}}
+                        <div class="mt-5 flex flex-col gap-4 border-t border-slate-200/70 pt-5 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+
+                            <p class="text-sm text-slate-400 dark:text-zinc-500">
+                                © {{ date('Y') }} fallabolo. Tous droits réservés. Conçu pour les PME camerounaises.
+                            </p>
+
+                            {{-- Icônes réseaux sociaux --}}
+                            <div class="flex items-center gap-4">
+                                {{-- LinkedIn --}}
+                                <a href="https://www.linkedin.com/company/fallabolo" aria-label="fallabolo sur LinkedIn" class="text-slate-400 transition hover:text-slate-950 dark:hover:text-zinc-50">
+                                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57A1.46 1.46 0 0 1 14.38 12.11A1.46 1.46 0 0 1 15.84 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88A1.68 1.68 0 0 0 6.88 5.2A1.68 1.68 0 0 0 5.2 6.88A1.68 1.68 0 0 0 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z"/>
+                                    </svg>
+                                </a>
+                                {{-- X / Twitter--}}
+                                <a href="https://youtube.com/@fallabolo?si=1l9db4ZVM2HCUPxT" aria-label="fallabolo sur X" class="text-slate-400 transition hover:text-slate-950 dark:hover:text-zinc-50">
+                                <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                                </a>
+                                {{-- WhatsApp --}}
+                                <a href="https://wa.me/237659005679" aria-label="fallabolo sur WhatsApp" class="text-slate-400 transition hover:text-slate-950 dark:hover:text-zinc-50">
+                                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </footer>
+
+ @fluxScripts
+        @persist('toast')
+            <flux:toast.group position="top center">
+                <flux:toast />
+            </flux:toast.group>
+        @endpersist
+</body>
 </html>
