@@ -6,51 +6,7 @@
 <title>MatchRH Recrutement Intelligent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<style>
-  body { font-family: 'DM Sans', sans-serif; }
 
-  .hero-grid {
-    background-image: linear-gradient(rgba(110,231,183,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(110,231,183,.06) 1px, transparent 1px);
-    background-size: 60px 60px;
-    -webkit-mask: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
-    mask: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
-  }
-  .light .hero-grid {
-    background-image: linear-gradient(rgba(5,150,105,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(5,150,105,.07) 1px, transparent 1px);
-  }
-
-  .grad-text {
-    background: linear-gradient(135deg, #6ee7b7, #34d399);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .glow-dot { box-shadow: 0 0 14px #34d399, 0 0 28px rgba(52,211,153,.4); }
-
-  /* Scroll reveal */
-  .reveal        { opacity:0; transform:translateY(28px);  transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
-  .reveal-l      { opacity:0; transform:translateX(-28px); transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
-  .reveal-r      { opacity:0; transform:translateX(28px);  transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
-  .reveal.on, .reveal-l.on, .reveal-r.on { opacity:1; transform:translate(0,0); }
-  .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
-
-  .bar-fill { width:0; transition:width 1.3s cubic-bezier(.16,1,.3,1); }
-  .bar-fill.on { width:var(--w); }
-
-  /* MCP shimmer */
-  .mcp-shimmer {
-    background: linear-gradient(90deg, rgba(110,231,183,.06) 25%, rgba(110,231,183,.18) 50%, rgba(110,231,183,.06) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
-  }
-  @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-
-  .price-card { transition: transform .3s cubic-bezier(.16,1,.3,1); }
-  .price-card:hover { transform: translateY(-5px); }
-
-  .mobile-drawer { transition: transform .35s cubic-bezier(.16,1,.3,1); }
-
-  ::-webkit-scrollbar { width:5px; }
-  ::-webkit-scrollbar-thumb { background:rgba(110,231,183,.25); border-radius:999px; }
-</style>
   @fluxAppearance
 
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -118,7 +74,7 @@
         class="fixed inset-x-0 top-0 z-50 flex min-h-screen flex-col bg-white dark:bg-zinc-950 md:hidden"
     >
         {{-- Header interne du menu --}}
-        <div class="flex items-center justify-between border-b border-slate-200/80 px-5 py-4 dark:border-zinc-800">
+        <div class="flex items-center justify-between border-b border-slate-200/80 px-5 py-4 dark:border-zinc-800 " >
             <a href="#top" x-on:click="menuOpen = false" class="flex items-center gap-2.5">
                 <span class="grid size-9 place-items-center rounded-lg text-white dark:bg-zinc-50 dark:text-zinc-950">
                     sqa
@@ -204,10 +160,10 @@
     >
         <nav
             aria-label="Navigation principale"
-            class="transition-all duration-300 ease-in-out w-full"
+            class="transition-all duration-300 ease-in-out w-full "
             :class="scrolled
-                ? 'mx-4 max-w-5xl rounded-full border border-slate-200/80 bg-white/90 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-[0_8px_32px_-4px_rgba(0,0,0,0.4)] px-4 py-2'
-                : 'border-b border-slate-200/80 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 px-5 py-4 lg:px-8'"
+                ? 'mx-4 max-w-5xl rounded-full  shadow-[0_8px_32px_-4px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.04)] backdrop-blur-md   dark:shadow-[0_8px_32px_-4px_rgba(16,185,129,0.2),0_0_24px_0_rgba(16,185,129,0.15)] px-4 py-2'
+                : 'backdrop-blur px-5 py-4 lg:px-8'"
         >
             <div
                 class="flex items-center justify-between transition-all duration-300"
@@ -222,10 +178,7 @@
                     >
                         sq
                     </span>
-                    <span
-                        class="font-black tracking-normal text-slate-950 dark:text-zinc-400 transition-all duration-300"
-                        :class="scrolled ? 'text-base ' : 'text-lg'"
-                    >fallabolo</span>
+                    <span                        class="font-black tracking-normal text-slate-950 dark:text-zinc-400 transition-all duration-300"                        :class="scrolled ? 'text-base ' : 'text-lg'"                    >fallabolo</span>
                 </a>
 
                 {{-- Liens desktop --}}
@@ -234,17 +187,17 @@
                     :class="scrolled ? 'gap-5 text-sm font-medium' : 'gap-7 text-sm font-semibold'"
                 >
 
-                <a href="#valeur"          :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Proposition de valeur</a>
-    <a href="#probleme"        :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Problème</a>
-    <a href="#solution"        :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Solution</a>
-    <a href="#fonctionnalites" :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Fonctionnalités</a>
-    <a href="#mcp"             :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">MCP</a>
-    <a href="#tarifs"          :class="dark ? 'border-zinc-800 text-zinc-300 hover:text-emerald-400' : 'border-zinc-100 text-zinc-600 hover:text-emerald-600'">Tarifs</a>
-  <button @click="dark=!dark; localStorage.setItem('theme', dark ? 'dark' : 'light')"
-            class="w-9 h-9 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer"
-            :class="dark ? 'hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/10' : ' hover:border-emerald-500/50 hover:text-emerald-600 hover:bg-emerald-50'">
-      <span x-text="dark ? '🌙' : '☀️'"></span>
-    </button>
+                <a href="#valeur"          :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">Proposition de valeur</a>
+                <a href="#probleme"        :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">Problème</a>
+                <a href="#solution"        :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">Solution</a>
+                <a href="#fonctionnalites" :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">Fonctionnalités</a>
+                <a href="#mcp"             :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">MCP</a>
+                <a href="#tarifs"          :class="dark ? ' text-zinc-300 hover:text-emerald-400' : 'text-zinc-600 hover:text-emerald-600'">Tarifs</a>
+               <button @click="dark=!dark; localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                        class="w-9 h-9 flex items-center justify-center rounded-xl  text-sm transition-all cursor-pointer"
+                        :class="dark ? 'hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/10' : ' hover:border-emerald-500/50 hover:text-emerald-600 hover:bg-emerald-50'">
+                     <span x-text="dark ? '🌙' : '☀️'"></span>
+                </button>
                 </div>
 
                 {{-- CTA desktop + burger mobile --}}
@@ -276,7 +229,7 @@
 </div>
 
 {{-- Spacer fixed header --}}
-<div class="h-[65px]"></div>
+<div class="h-16.25"></div>
 
 
 
@@ -1101,185 +1054,18 @@
   </div>
 </section>
 
-
-{{-- ═══════════════════════════════════════════════════
-     TÉMOIGNAGES scroll-snap mobile / carousel JS desktop
-═══════════════════════════════════════════════════ --}}
-<section
-    id="avis"
-    class="overflow-hidden bg-white py-16 dark:bg-zinc-950 sm:py-20"
-    x-data="testimonialCarousel()"
-    x-init="init()"
->
-    <div class="mx-auto max-w-7xl px-5 lg:px-8">
-
-        {{-- ── En-tête ── --}}
-        <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div class="max-w-xl">
-                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:bg-emerald-400/20 dark:text-emerald-300">
-                    <span class="size-1.5 rounded-full bg-emerald-500"></span>
-                    Ils avancent avec Squarhe
-                </span>
-                <h2 class="mt-4 text-2xl font-black leading-tight text-slate-950 dark:text-zinc-300 sm:text-3xl lg:text-4xl">
-                    Des PME camerounaises qui ont remplacé Excel.
-                </h2>
-            </div>
-
-            {{-- Contrôles masqués sur mobile (scroll natif suffit) --}}
-            <div class="hidden items-center gap-2 sm:flex">
-                <button x-on:click="prev()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" aria-label="Précédent">
-                    <svg class="size-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
-                </button>
-                <button x-on:click="togglePause()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" :aria-label="paused ? 'Reprendre' : 'Pause'">
-                    <svg x-show="!paused" class="size-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75A.75.75 0 0 0 7.25 3h-1.5ZM12.75 3a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75V3.75a.75.75 0 0 0-.75-.75h-1.5Z"/></svg>
-                    <svg x-show="paused" class="size-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6.3 2.84A1.5 1.5 0 0 0 4 4.11v11.78a1.5 1.5 0 0 0 2.3 1.27l9.344-5.891a1.5 1.5 0 0 0 0-2.538L6.3 2.84Z"/></svg>
-                </button>
-                <button x-on:click="next()" class="grid size-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800" aria-label="Suivant">
-                    <svg class="size-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
-                </button>
-                <span class="ml-1 text-sm font-bold tabular-nums text-slate-400 dark:text-zinc-500">
-                    <span x-text="current + 1"></span><span class="text-slate-300 dark:text-zinc-700">/</span><span x-text="total"></span>
-                </span>
-            </div>
-        </div>
-
-        {{-- ══════════════════════════════════════════
-             MOBILE : scroll snap natif (< sm)
-        ══════════════════════════════════════════ --}}
-        <div class="mt-8 sm:hidden">
-            <div
-                class="flex gap-3 overflow-x-auto pb-2"
-                style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;"
-                x-ref="mobileTrack"
-            >
-                @php
-                $testimonials_data = [
-                    ['name' => 'Ariane M.', 'role' => 'Directrice administrative', 'location' => 'Douala', 'sector' => 'Cabinet d\'architecture', 'result' => 'La validation de paie prend maintenant 20 minutes, contre 2 jours avant.', 'quote' => 'Squarhe nous donne une vision claire de la paie avant validation. Les équipes gagnent du temps sans perdre le contrôle.'],
-                    ['name' => 'Patrick N.', 'role' => 'Fondateur', 'location' => 'Yaoundé', 'sector' => 'PME services', 'result' => 'Zéro oubli de variable depuis que nous utilisons Squarhe.', 'quote' => 'La plateforme a transformé nos fins de mois. Les variables sont suivies, les oublis diminuent et les bulletins partent plus vite.'],
-                    ['name' => 'Nadia E.', 'role' => 'Responsable RH', 'location' => 'Douala', 'sector' => 'Distribution', 'result' => 'Les demandes de congés sont traitées en 1 clic au lieu de passer par WhatsApp.', 'quote' => 'J\'aime la simplicité de Squarhe. Les collaborateurs comprennent leurs espaces et les managers suivent les demandes sans relance.'],
-                    ['name' => 'Brice T.', 'role' => 'Gérant', 'location' => 'Bafoussam', 'sector' => 'Commerce', 'result' => 'Un historique CNPS propre et accessible en quelques secondes.', 'quote' => 'On a remplacé les fichiers dispersés par une base fiable. Les contrôles sont plus rapides et les décisions plus sereines.'],
-                    ['name' => 'Mireille K.', 'role' => 'Office Manager', 'location' => 'Douala', 'sector' => 'BTP', 'result' => 'Notre équipe de 30 personnes gérée sans service RH dédié.', 'quote' => 'Squarhe nous aide à rester organisés même avec une petite équipe RH. Tout est lisible et accessible au bon moment.'],
-                    ['name' => 'Samuel F.', 'role' => 'CEO', 'location' => 'Yaoundé', 'sector' => 'Agence digitale', 'result' => 'La paie automatisée sans perdre la main sur les validations importantes.', 'quote' => 'La vision produit est excellente : automatiser la paie tout en gardant l\'humain au centre des validations importantes.'],
-                    ['name' => 'Clarisse B.', 'role' => 'Comptable', 'location' => 'Douala', 'sector' => 'Services financiers', 'result' => 'Je vois en temps réel l\'impact de chaque variable sur la masse salariale.', 'quote' => 'Les impacts en temps réel sur la paie sont rassurants. Je vois tout de suite ce qui change et pourquoi.'],
-                    ['name' => 'Eric D.', 'role' => 'Directeur Général', 'location' => 'Douala', 'sector' => 'Industrie légère', 'result' => 'Une discipline RH qu\'on n\'arrivait pas à installer avec Excel.', 'quote' => 'Squarhe apporte une discipline RH qui manquait à notre croissance. C\'est simple, structuré et très concret.'],
-                    ['name' => 'Joëlle S.', 'role' => 'Chargée d\'administration', 'location' => 'Limbé', 'sector' => 'ONG', 'result' => 'Retrouver un contrat ou un bulletin prend 10 secondes, pas 10 minutes.', 'quote' => 'Les documents RH sont enfin centralisés. Nous retrouvons les contrats et bulletins sans fouiller dans plusieurs dossiers.'],
-                    ['name' => 'Marc L.', 'role' => 'DAF', 'location' => 'Douala', 'sector' => 'Import-Export', 'result' => 'Zéro retard sur nos déclarations CNPS cette année.', 'quote' => 'La conformité est mieux suivie et les mises à jour rassurent la direction. C\'est un vrai gain de fiabilité.'],
-                    ['name' => 'Kevin O.', 'role' => 'Entrepreneur', 'location' => 'Kribi', 'sector' => 'Hôtellerie', 'result' => 'La paie de 45 saisonniers gérée sans stress ni erreur.', 'quote' => 'Squarhe rend la paie moins stressante. Les processus sont guidés et les erreurs deviennent beaucoup plus faciles à détecter.'],
-                    ['name' => 'Oscar W.', 'role' => 'Fondateur', 'location' => 'Douala', 'sector' => 'Cabinet conseil', 'result' => 'Un outil qui connaît la CNPS, le Code du travail camerounais et nos réalités.', 'quote' => 'Squarhe comprend les réalités locales. Ce n\'est pas un outil générique plaqué sur nos contraintes.'],
-                ];
-                @endphp
-
-                {{-- Padding left pour que la première card soit bien centrée --}}
-                <div class="w-5 shrink-0"></div>
-
-                @foreach ($testimonials_data as $t)
-                    <div
-                        class="flex w-[85vw] shrink-0 flex-col rounded-2xl border border-slate-200/80 bg-slate-50 p-5 dark:border-zinc-800 dark:bg-zinc-900"
-                        style="scroll-snap-align: center;"
-                    >
-                        <div class="flex items-center gap-0.5" aria-label="5 étoiles">
-                            @for ($s = 0; $s < 5; $s++)
-                                <svg class="size-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                            @endfor
-                        </div>
-                        <div class="mt-4 inline-flex items-start gap-2 rounded-lg bg-emerald-100/80 px-3 py-2 dark:bg-emerald-400/10">
-                            <svg class="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>
-                            <p class="text-xs font-bold leading-5 text-emerald-800 dark:text-emerald-300">{{ $t['result'] }}</p>
-                        </div>
-                        <p class="mt-4 flex-1 text-sm leading-7 text-slate-600 dark:text-zinc-400">"{{ $t['quote'] }}"</p>
-                        <div class="mt-5 flex items-center gap-3 border-t border-slate-200/80 pt-4 dark:border-zinc-800">
-                            <div class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-200 text-sm font-black text-slate-700 dark:bg-zinc-800 dark:text-zinc-200">
-                                {{ mb_substr($t['name'], 0, 1) }}
-                            </div>
-                            <div class="min-w-0">
-                                <p class="truncate text-sm font-black text-slate-950 dark:text-zinc-400">{{ $t['name'] }}</p>
-                                <p class="truncate text-xs text-slate-500 dark:text-zinc-400">{{ $t['role'] }} · {{ $t['sector'] }}</p>
-                            </div>
-                            <span class="ml-auto shrink-0 text-xs text-slate-400">📍 {{ $t['location'] }}</span>
-                        </div>
-                    </div>
-                @endforeach
-
-                <div class="w-5 shrink-0"></div>
-            </div>
-
-            {{-- Indicateur swipe --}}
-            <p class="mt-3 text-center text-xs text-slate-400 dark:text-zinc-500">← Glissez pour voir plus →</p>
-        </div>
-
-        {{-- ══════════════════════════════════════════
-             DESKTOP : carousel JS (sm+)
-        ══════════════════════════════════════════ --}}
-        <div class="relative mt-10 hidden overflow-hidden sm:block">
-            <div
-            data-carousel-track
-                class="flex transition-transform duration-700 ease-in-out will-change-transform"
-                :style="`transform: translateX(-${current * (100 / visibleCount)}%)`"
-            >
-                @foreach ($testimonials_data as $t)
-                    <div
-                        class="shrink-0 px-2"
-                        :style="`width: ${100 / visibleCount}%`"
-                        style="width: 50%"
-                    >
-                        <div class="flex h-full flex-col rounded-2xl border border-slate-200/80 bg-slate-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                            <div class="flex items-center gap-0.5" aria-label="5 étoiles">
-                                @for ($s = 0; $s < 5; $s++)
-                                    <svg class="size-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                                @endfor
-                            </div>
-                            <div class="mt-4 inline-flex items-start gap-2 rounded-lg bg-emerald-100/80 px-3 py-2 dark:bg-emerald-400/10">
-                                <svg class="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>
-                                <p class="text-xs font-bold leading-5 text-emerald-800 dark:text-emerald-300">{{ $t['result'] }}</p>
-                            </div>
-                            <p class="mt-4 flex-1 text-sm leading-7 text-slate-600 dark:text-zinc-400">"{{ $t['quote'] }}"</p>
-                            <div class="mt-5 flex items-center gap-3 border-t border-slate-200/80 pt-4 dark:border-zinc-800">
-                                <div class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-200 text-sm font-black text-slate-700 dark:bg-zinc-800 dark:text-zinc-200">
-                                    {{ mb_substr($t['name'], 0, 1) }}
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-black text-slate-950 dark:text-zinc-400">{{ $t['name'] }}</p>
-                                    <p class="truncate text-xs text-slate-500 dark:text-zinc-400">{{ $t['role'] }} · {{ $t['sector'] }}</p>
-                                </div>
-                                <span class="ml-auto shrink-0 text-xs text-slate-400">📍 {{ $t['location'] }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- Fades latéraux --}}
-            <div class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white to-transparent dark:from-zinc-950"></div>
-            <div class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent dark:from-zinc-950"></div>
-        </div>
-
-        {{-- Dots desktop --}}
-        <div class="mt-6 hidden items-center justify-center gap-1.5 sm:flex">
-            @foreach ($testimonials_data as $i => $t)
-                <button
-                    x-on:click="goTo({{ $i }})"
-                    class="rounded-full transition-all duration-300"
-                    :class="{{ $i }} === current ? 'w-6 h-2 bg-slate-950 dark:bg-zinc-50' : 'size-2 bg-slate-300 hover:bg-slate-400 dark:bg-zinc-700/60'"
-                    aria-label="Témoignage {{ $i + 1 }}"
-                ></button>
-            @endforeach
-        </div>
-
-    </div>
-</section>
-
    {{-- ═══════════════════════════════════════════════════
                      FAQ Réponses enrichies
                 ═══════════════════════════════════════════════════ --}}
-                <section id="faq" class="border-y border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+                <section id="faq" class="border-y border-slate-200  dark:border-zinc-800 ">
                     <div class="mx-auto max-w-4xl px-5 py-12 sm:py-16 lg:px-8">
                         <div class="text-left sm:text-center">
                             <p class="text-sm font-black uppercase text-emerald-700">Foire aux questions</p>
-                            <h2 class="mt-3 text-2xl font-black leading-tight text-slate-950 sm:text-4xl">Tout ce que vous voulez savoir avant de nous contacter.</h2>
+                            <h2 class="mt-3 text-2xl font-black leading-tight sm:text-4xl :class="dark ? 'text-zinc-100' : 'text-zinc-900'"">Tout ce que vous voulez savoir avant de nous contacter.</h2>
                         </div>
                         <div class="mt-8 space-y-3 sm:mt-10">
                             @foreach ($faqs as $index => $faq)
-                                <details class="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:open:bg-zinc-800 sm:p-5" @if ($index === 0) open @endif>
+                                <details class="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:shadow-lg dark:border-zinc-800  :class="dark ? 'bg-zinc-950' : 'bg-slate-50'" sm:p-5" @if ($index === 0) open @endif>
                                     <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 font-black text-slate-950 dark:text-zinc-400 sm:gap-5">
                                         <span>{{ $faq['question'] }}</span>
                                         <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-200 text-slate-700 transition group-open:rotate-45 dark:bg-zinc-800 dark:text-zinc-200"><flux:icon.plus class="size-4" /></span>
@@ -1291,9 +1077,9 @@
 
                         <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900">
                             <p class="font-bold text-slate-700 dark:text-zinc-400">Vous avez une question spécifique à votre situation ?</p>
-                            <flux:button href="#contact" variant="primary" class="mt-4">
+                            <button class="px-8 mt-6 py-3.5 rounded-xl font-display font-bold bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/20">
                                 Parlez-nous de votre PME
-                            </flux:button>
+                            </button>
                         </div>
                     </div>
                 </section>
