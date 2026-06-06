@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MatchRH Recrutement Intelligent</title>
+<meta name="description" content="MatchRH est la plateforme de recrutement intelligente qui utilise un scoring algorithmique transparent pour connecter les talents et les entreprises sans tri manuel de CV au Cameroun.">
+<meta name="keywords" content="recrutement, RH, matching, algorithme, emploi, Cameroun, sans CV, scoring, recrutement intelligent">
+<meta property="og:title" content="MatchRH - Recrutement Intelligent sans CV">
+<meta property="og:description" content="Connectez-vous aux meilleurs talents grâce au matching algorithmique transparent.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MatchRH - Recrutement Intelligent sans CV">
+<meta name="twitter:description" content="La plateforme qui met fin au tri manuel des CV.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 
@@ -13,19 +21,42 @@
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endif
 
-        @php
-            // ─── FAQ ─────────────────────────────────────────────────────
-            $faqs = [
-                ['question' => 'Ai-je besoin de connaissances en paie pour utiliser Squarhe ?', 'answer' => 'Non. Squarhe est conçu pour les dirigeants et gestionnaires qui ne sont pas experts en paie. L\'interface vous guide étape par étape : vous saisissez les variables, Squarhe calcule, vous validez. Notre équipe vous accompagne à la prise en main la plupart de nos clients sont opérationnels en moins d\'une journée.'],
-                ['question' => 'Combien coûte Squarhe concrètement pour mon équipe ?', 'answer' => 'Squarhe démarre à 14 900 FCFA/mois pour 5 employés (offre Starter). Pour 20 employés, l\'offre Croissance revient à 34 900 FCFA/mois soit moins de 1 750 FCFA par employé. Utilisez le simulateur de tarifs sur cette page pour voir votre prix exact selon votre effectif.'],
-                ['question' => 'Y a-t-il des frais cachés ou des suppléments ?', 'answer' => 'Non. Le prix affiché couvre les bulletins, les documents RH habituels et le support. Il n\'y a pas de facturation à l\'acte pour les procédures courantes. Seul le setup fee (mise en service initiale) est séparé, négociable selon votre situation.'],
-                ['question' => 'Est-ce que Squarhe couvre la CNPS et l\'IRPP camerounais ?', 'answer' => 'Oui. Squarhe intègre les règles de calcul CNPS et IRPP en vigueur au Cameroun, avec des mises à jour automatiques en cas de changement réglementaire. Vous disposez également des exports nécessaires pour vos déclarations et contrôles.'],
-                ['question' => 'Que se passe-t-il si mon équipe grossit ?', 'answer' => 'Squarhe s\'adapte à votre croissance. Vous pouvez passer d\'une offre à l\'autre à tout moment, sans engagement annuel. Le simulateur de tarifs sur cette page calcule automatiquement votre prix en fonction de votre effectif.'],
-                ['question' => 'Squarhe couvre-t-il tous les secteurs d\'activité ?', 'answer' => 'Squarhe couvre la majorité des PME de services, commerce et industrie légère. Certaines conventions spécifiques comme le BTP et l\'agriculture ne sont pas encore entièrement intégrées, mais vous pouvez configurer vos propres bases de calcul. Contactez-nous pour évaluer votre situation.'],
-                ['question' => 'Comment se passe la migration depuis Excel ?', 'answer' => 'Nous vous accompagnons pendant la migration. Notre équipe reprend vos données existantes (employés, historique, variables) et les importe dans Squarhe. La migration se fait idéalement en fin de mois ou d\'exercice pour une continuité parfaite.'],
-                ['question' => 'Mes données sont-elles sécurisées ?', 'answer' => 'Oui. Les accès sont contrôlés par rôle (administrateur, gestionnaire, employé), vos données sont sauvegardées automatiquement et toutes les actions importantes sont tracées. Vos bulletins et contrats sont archivés dans un espace structuré et sécurisé.'],
-            ];
-        @endphp
+       @php
+    $faqs = [
+        [
+            'question' => 'Dois-je obligatoirement envoyer un CV pour postuler ?',
+            'answer'   => 'Non, le CV est entièrement optionnel sur MatchRH. Vous créez un profil structuré (compétences notées /5, expériences vérifiables, langues, disponibilité) et c\'est lui qui génère votre score de compatibilité. Si vous avez un CV, vous pouvez l\'attacher, mais il n\'est jamais un prérequis pour postuler.',
+        ],
+        [
+            'question' => 'Comment est calculé mon score de compatibilité ?',
+            'answer'   => 'Le score est entièrement transparent et déterministe pas de boîte noire. Il repose sur 6 dimensions pondérées : compétences (50 %), expérience (20 %), formation (10 %), langues (10 %), disponibilité (5 %) et localisation (5 %). Des points bonus s\'ajoutent pour les certifications et expertises rares. Chaque critère est visible avant même que vous postuliez.',
+        ],
+        [
+            'question' => 'Puis-je voir mon score avant de postuler à une offre ?',
+            'answer'   => 'Oui, c\'est l\'une des fonctionnalités clés de MatchRH. Avant chaque candidature, vous voyez votre compatibilité estimée et sa décomposition détaillée. Vous pouvez ainsi postuler en connaissance de cause ou améliorer votre profil pour augmenter votre score.',
+        ],
+        [
+            'question' => 'Je suis recruteur : combien coûte la plateforme ?',
+            'answer'   => 'MatchRH est entièrement gratuit, sans limite cachée. Offres illimitées, candidatures illimitées, classement automatique, notifications temps réel tout est inclus sans carte bancaire requise. La gratuité totale est notre avantage stratégique : elle permet d\'agréger rapidement la masse critique de candidats et de recruteurs.',
+        ],
+        [
+            'question' => 'Qu\'est-ce qu\'un critère bloquant et comment ça fonctionne ?',
+            'answer'   => 'Un critère bloquant est une exigence non-négociable définie par le recruteur permis de conduire, niveau d\'expérience minimum, localisation, etc. Si le candidat ne satisfait pas ce critère, son score tombe automatiquement à 0 et sa candidature n\'apparaît pas dans le classement. Les recruteurs ne voient que des profils réellement éligibles.',
+        ],
+        [
+            'question' => 'Comment MatchRH protège-t-il mes données personnelles ?',
+            'answer'   => 'Vos données sont hébergées conformément à la loi camerounaise sur la protection des données personnelles (2024). Les accès sont contrôlés par rôle, les actions importantes sont tracées, et vous pouvez demander la suppression de votre profil à tout moment. Vos informations ne sont jamais revendues à des tiers.',
+        ],
+        [
+            'question' => 'Qu\'est-ce que l\'intégration MCP annoncée sur la plateforme ?',
+            'answer'   => 'MCP (Model Context Protocol) est un protocole qui permettra d\'interagir avec MatchRH directement depuis des assistants IA (Claude, ChatGPT, Cursor…). Recruteurs et candidats pourront consulter des classements, publier des offres et recevoir des recommandations en langage naturel, sans quitter leur outil habituel. Cette fonctionnalité est en cours de développement.',
+        ],
+        [
+            'question' => 'L\'algorithme de matching est-il biaisé ?',
+            'answer'   => 'Le scoring de MatchRH est intentionnellement déterministe et documenté pour minimiser les biais. Il n\'évalue pas la photo, le nom, le sexe ou l\'âge uniquement les compétences, l\'expérience et les critères objectifs définis par le recruteur. Chaque score est décomposé et contestable. L\'objectif : le meilleur profil gagne, pas le meilleur CV designer.',
+        ],
+    ];
+@endphp
 </head>
 
 <body class="antialiased overflow-x-hidden transition-colors duration-300"
@@ -1053,36 +1084,379 @@
     </div>
   </div>
 </section>
+{{-- ═══════════════════════════════════════════════════════════════════════
+     SECTION TÉMOIGNAGES
+     — À insérer après #utilisateurs, avant #tarifs
+     — Le script Alpine est dans resources/js/testimonial-carousel.js
+       (importé dans app.js via : import './testimonial-carousel')
+     ═══════════════════════════════════════════════════════════════════════ --}}
+
+@php
+$testimonials = [
+    [
+        'initials' => 'MK',
+        'name'     => 'Marie Kamga',
+        'role'     => 'Responsable RH',
+        'company'  => 'TechCom Cameroun',
+        'color'    => 'emerald',
+        'stars'    => 5,
+        'badge'    => 'Recruteur',
+        'quote'    => 'En 3 ans de recrutement je n\'avais jamais reçu des candidatures aussi qualifiées dès le premier jour. Le classement automatique m\'a fait économiser deux jours de travail sur notre dernière campagne.',
+    ],
+    [
+        'initials' => 'JN',
+        'name'     => 'Jean-Paul Nkoa',
+        'role'     => 'Développeur Full Stack',
+        'company'  => 'Indépendant, Yaoundé',
+        'color'    => 'indigo',
+        'stars'    => 5,
+        'badge'    => 'Candidat',
+        'quote'    => 'Voir mon score avant de postuler a tout changé. Je cible uniquement les offres où je dépasse 80 %. J\'ai décroché mon poste actuel en 12 jours.',
+    ],
+    [
+        'initials' => 'SB',
+        'name'     => 'Sophie Bello',
+        'role'     => 'DG',
+        'company'  => 'Agence Digit+ Douala',
+        'color'    => 'amber',
+        'stars'    => 5,
+        'badge'    => 'Recruteur',
+        'quote'    => 'On avait l\'habitude de recevoir 150 CVs par poste. Avec MatchRH on en reçoit 25, toutes pertinentes. Les critères bloquants font le filtre à notre place.',
+    ],
+    [
+        'initials' => 'AM',
+        'name'     => 'Alain Mfoumou',
+        'role'     => 'Comptable Senior',
+        'company'  => 'Bafoussam',
+        'color'    => 'sky',
+        'stars'    => 5,
+        'badge'    => 'Candidat',
+        'quote'    => 'Sans CV obligatoire, j\'ai pu me concentrer sur ce que je sais vraiment faire. Mon profil reflète mes vraies compétences — le recruteur m\'a rappelé en 48 h.',
+    ],
+    [
+        'initials' => 'FE',
+        'name'     => 'Fatima Essomba',
+        'role'     => 'Head of Talent',
+        'company'  => 'FinServ Africa',
+        'color'    => 'rose',
+        'stars'    => 5,
+        'badge'    => 'Recruteur',
+        'quote'    => 'L\'algorithme est transparent — chaque score est décomposé, explicable. Nos équipes l\'ont adopté sans résistance parce qu\'elles comprennent la logique. Pas de boîte noire.',
+    ],
+    [
+        'initials' => 'PN',
+        'name'     => 'Patrick Nguema',
+        'role'     => 'Ingénieur Réseaux',
+        'company'  => 'Douala',
+        'color'    => 'teal',
+        'stars'    => 5,
+        'badge'    => 'Candidat',
+        'quote'    => 'J\'ai passé des mois à adapter mon CV sans résultats. Sur MatchRH j\'ai rempli mon profil une fois et les offres viennent à moi. Le système de recommandations est vraiment efficace.',
+    ],
+];
+
+// Palette par couleur : classes Tailwind pour dark / light
+$palette = [
+    'emerald' => [
+        'avatar_dark'  => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+        'avatar_light' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        'badge_dark'   => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+        'badge_light'  => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        'stars'        => 'text-emerald-400',
+    ],
+    'indigo'  => [
+        'avatar_dark'  => 'bg-indigo-500/15 text-indigo-300 border-indigo-500/25',
+        'avatar_light' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        'badge_dark'   => 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+        'badge_light'  => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        'stars'        => 'text-indigo-400',
+    ],
+    'amber'   => [
+        'avatar_dark'  => 'bg-amber-500/15 text-amber-300 border-amber-500/25',
+        'avatar_light' => 'bg-amber-50 text-amber-700 border-amber-200',
+        'badge_dark'   => 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        'badge_light'  => 'bg-amber-50 text-amber-700 border-amber-200',
+        'stars'        => 'text-amber-400',
+    ],
+    'sky'     => [
+        'avatar_dark'  => 'bg-sky-500/15 text-sky-300 border-sky-500/25',
+        'avatar_light' => 'bg-sky-50 text-sky-700 border-sky-200',
+        'badge_dark'   => 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+        'badge_light'  => 'bg-sky-50 text-sky-700 border-sky-200',
+        'stars'        => 'text-sky-400',
+    ],
+    'rose'    => [
+        'avatar_dark'  => 'bg-rose-500/15 text-rose-300 border-rose-500/25',
+        'avatar_light' => 'bg-rose-50 text-rose-700 border-rose-200',
+        'badge_dark'   => 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+        'badge_light'  => 'bg-rose-50 text-rose-700 border-rose-200',
+        'stars'        => 'text-rose-400',
+    ],
+    'teal'    => [
+        'avatar_dark'  => 'bg-teal-500/15 text-teal-300 border-teal-500/25',
+        'avatar_light' => 'bg-teal-50 text-teal-700 border-teal-200',
+        'badge_dark'   => 'bg-teal-500/10 text-teal-400 border-teal-500/20',
+        'badge_light'  => 'bg-teal-50 text-teal-700 border-teal-200',
+        'stars'        => 'text-teal-400',
+    ],
+];
+@endphp
+
+<section id="avis" class="py-24 overflow-hidden transition-colors duration-300"
+         :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+
+    {{-- ── En-tête (centré, max-w pour lisibilité) ── --}}
+    <div class="max-w-5xl mx-auto px-5 mb-12 text-center reveal">
+        <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+             :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+            Témoignages
+        </div>
+        <h2 class="font-display font-bold leading-tight mb-3"
+            style="font-size:clamp(1.8rem,4.5vw,3rem)"
+            :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+            Ils ont arrêté de trier des CVs.<br>
+            <span class="grad-text">Ils recrutent mieux.</span>
+        </h2>
+        <p class="text-base max-w-md mx-auto"
+           :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+            Candidats et recruteurs partagent leur expérience MatchRH.
+        </p>
+    </div>
+
+    {{-- ── Carrousel pleine largeur ── --}}
+    <div
+        x-data="testimonialCarousel({{ count($testimonials) }})"
+        x-init="init()"
+        class="relative w-full"
+    >
+        {{-- Masques de fondu — pleine hauteur, pleine largeur de fenêtre --}}
+        <div class="pointer-events-none absolute inset-y-0 left-0 w-20 z-10"
+             :style="dark
+                 ? 'background:linear-gradient(to right,#09090b 0%,transparent 100%)'
+                 : 'background:linear-gradient(to right,#f8fafc 0%,transparent 100%)'">
+        </div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-20 z-10"
+             :style="dark
+                 ? 'background:linear-gradient(to left,#09090b 0%,transparent 100%)'
+                 : 'background:linear-gradient(to left,#f8fafc 0%,transparent 100%)'">
+        </div>
+
+        {{-- Piste de défilement — déborde volontairement hors du viewport --}}
+        <div
+            id="testimonial-track"
+            class="flex gap-5 pb-2"
+            style="will-change:transform; touch-action:pan-y;"
+            @mouseenter="pause()"
+            @mouseleave="play()"
+            @touchstart.passive="onTouchStart($event)"
+            @touchmove.passive="onTouchMove($event)"
+            @touchend="onTouchEnd($event)"
+        >
+            {{-- Les cards réelles --}}
+            @foreach ($testimonials as $t)
+                @php $c = $palette[$t['color']]; @endphp
+                <div class="testimonial-card flex-shrink-0 w-[300px] sm:w-[340px] rounded-2xl border p-6 flex flex-col gap-4 transition-colors duration-200 cursor-default"
+                     :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'">
+
+                    {{-- Avatar + nom + badge --}}
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="grid size-10 shrink-0 place-items-center rounded-xl border font-bold text-sm font-display"
+                                 :class="dark ? '{{ $c['avatar_dark'] }}' : '{{ $c['avatar_light'] }}'">
+                                {{ $t['initials'] }}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-display font-bold text-sm leading-tight truncate"
+                                   :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+                                    {{ $t['name'] }}
+                                </p>
+                                <p class="text-xs mt-0.5 truncate"
+                                   :class="dark ? 'text-zinc-500' : 'text-zinc-400'">
+                                    {{ $t['role'] }} · {{ $t['company'] }}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="shrink-0 px-2.5 py-1 rounded-lg border text-xs font-semibold"
+                              :class="dark ? '{{ $c['badge_dark'] }}' : '{{ $c['badge_light'] }}'">
+                            {{ $t['badge'] }}
+                        </span>
+                    </div>
+
+                    {{-- Étoiles --}}
+                    <div class="flex gap-0.5 {{ $c['stars'] }}">
+                        @for ($s = 0; $s < $t['stars']; $s++)
+                            <flux:icon.star class="size-4" />
+                        @endfor
+                    </div>
+
+                    {{-- Citation --}}
+                    <blockquote class="text-sm leading-relaxed flex-1"
+                                :class="dark ? 'text-zinc-300' : 'text-zinc-600'">
+                        "{{ $t['quote'] }}"
+                    </blockquote>
+                </div>
+            @endforeach
+            {{-- Les clones Before/After sont injectés dynamiquement par le JS --}}
+        </div>
+
+        {{-- ── Contrôles : dots + flèches + play/pause ── --}}
+        <div class="max-w-5xl mx-auto px-5 mt-7 flex items-center justify-between gap-4">
+
+            {{-- Dots (un par card réelle) --}}
+            <div class="flex items-center gap-2">
+                @foreach ($testimonials as $i => $t)
+                    <button
+                        @click="goTo({{ $i }})"
+                        :class="current === {{ $i }}
+                            ? (dark ? 'bg-emerald-400 w-5' : 'bg-emerald-500 w-5')
+                            : (dark ? 'bg-zinc-700 w-2 hover:bg-zinc-500' : 'bg-zinc-300 w-2 hover:bg-zinc-400')"
+                        class="h-2 rounded-full transition-all duration-300 focus-visible:outline-none"
+                        :aria-label="'Aller au témoignage ' + ({{ $i }} + 1)"
+                        :aria-current="current === {{ $i }} ? 'true' : 'false'"
+                    ></button>
+                @endforeach
+            </div>
+
+            {{-- Flèches + Play/Pause --}}
+            <div class="flex items-center gap-2">
+
+                <button
+                    @click="prev()"
+                    class="grid size-9 place-items-center rounded-xl border transition-all"
+                    :class="dark
+                        ? 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
+                        : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-800'"
+                    aria-label="Témoignage précédent"
+                >
+                    <flux:icon.arrow-left class="size-4" />
+                </button>
+
+                <button
+                    @click="togglePlay()"
+                    class="grid size-9 place-items-center rounded-xl border transition-all"
+                    :class="dark
+                        ? 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
+                        : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-800'"
+                    :aria-label="playing ? 'Mettre en pause' : 'Reprendre le défilement'"
+                >
+                    <template x-if="playing">
+                        <flux:icon.pause class="size-4" />
+                    </template>
+                    <template x-if="!playing">
+                        <flux:icon.play class="size-4" />
+                    </template>
+                </button>
+
+                <button
+                    @click="next()"
+                    class="grid size-9 place-items-center rounded-xl border transition-all"
+                    :class="dark
+                        ? 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
+                        : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-800'"
+                    aria-label="Témoignage suivant"
+                >
+                    <flux:icon.arrow-right class="size-4" />
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="py-24 px-5 transition-colors duration-300"
+         :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
+  <div class="max-w-3xl mx-auto">
+    <div class="reveal text-center mb-14">
+      <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+           :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+        Contactez-nous
+      </div>
+      <h2 class="font-display font-bold leading-tight mb-4" style="font-size:clamp(1.8rem,4.5vw,3rem)"
+          :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+        Une question ?<br><span class="grad-text">Parlons-en.</span>
+      </h2>
+      <p class="text-base max-w-md mx-auto" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+        Que vous soyez recruteur ou candidat, notre équipe est là pour vous accompagner.
+      </p>
+    </div>
+
+    <div class="reveal">
+        <livewire:contact-form />
+    </div>
+  </div>
+</section>
 
    {{-- ═══════════════════════════════════════════════════
                      FAQ Réponses enrichies
                 ═══════════════════════════════════════════════════ --}}
-                <section id="faq" class="border-y border-slate-200  dark:border-zinc-800 ">
-                    <div class="mx-auto max-w-4xl px-5 py-12 sm:py-16 lg:px-8">
-                        <div class="text-left sm:text-center">
-                            <p class="text-sm font-black uppercase text-emerald-700">Foire aux questions</p>
-                            <h2 class="mt-3 text-2xl font-black leading-tight sm:text-4xl :class="dark ? 'text-zinc-100' : 'text-zinc-900'"">Tout ce que vous voulez savoir avant de nous contacter.</h2>
-                        </div>
-                        <div class="mt-8 space-y-3 sm:mt-10">
-                            @foreach ($faqs as $index => $faq)
-                                <details class="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:shadow-lg dark:border-zinc-800  :class="dark ? 'bg-zinc-950' : 'bg-slate-50'" sm:p-5" @if ($index === 0) open @endif>
-                                    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 font-black text-slate-950 dark:text-zinc-400 sm:gap-5">
-                                        <span>{{ $faq['question'] }}</span>
-                                        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-200 text-slate-700 transition group-open:rotate-45 dark:bg-zinc-800 dark:text-zinc-200"><flux:icon.plus class="size-4" /></span>
-                                    </summary>
-                                    <p class="mt-4 leading-8 text-slate-600 dark:text-zinc-400">{{ $faq['answer'] }}</p>
-                                </details>
-                            @endforeach
-                        </div>
+            <section id="faq" class="border-y transition-colors duration-300"
+         :class="dark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-slate-50'">
+    <div class="mx-auto max-w-3xl px-5 py-14 sm:py-20 lg:px-8">
 
-                        <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                            <p class="font-bold text-slate-700 dark:text-zinc-400">Vous avez une question spécifique à votre situation ?</p>
-                            <button class="px-8 mt-6 py-3.5 rounded-xl font-display font-bold bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/20">
-                                Parlez-nous de votre PME
-                            </button>
-                        </div>
+        {{-- En-tête --}}
+        <div class="mb-10 text-center">
+            <div class="inline-block px-3 py-1 rounded-full border text-xs font-bold font-display uppercase tracking-widest mb-4"
+                 :class="dark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'">
+                Foire aux questions
+            </div>
+            <h2 class="font-display font-bold leading-tight mb-3" style="font-size:clamp(1.6rem,4vw,2.4rem)"
+                :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+                Tout ce que vous voulez savoir<br class="hidden sm:block"> avant de vous lancer.
+            </h2>
+            <p class="text-sm" :class="dark ? 'text-zinc-400' : 'text-zinc-500'">
+                Candidats et recruteurs vos questions les plus fréquentes.
+            </p>
+        </div>
+
+        {{-- Accordéon --}}
+        <div class="space-y-3">
+            @foreach ($faqs as $index => $faq)
+                <details
+                    class="group rounded-2xl border transition-colors duration-200"
+                    :class="dark
+                        ? 'bg-zinc-900 border-zinc-800 open:border-emerald-500/30'
+                        : 'bg-white border-zinc-200 open:border-emerald-300'"
+                    @if ($index === 0) open @endif
+                >
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:py-5">
+                        <span class="font-semibold text-sm leading-snug sm:text-base"
+                              :class="dark ? 'text-zinc-100' : 'text-zinc-900'">
+                            {{ $faq['question'] }}
+                        </span>
+                        <span class="grid size-7 shrink-0 place-items-center rounded-lg border transition-all duration-200
+                                     group-open:rotate-45"
+                              :class="dark
+                                  ? 'border-zinc-700 bg-zinc-800 text-zinc-300 group-open:border-emerald-500/30 group-open:bg-emerald-500/10 group-open:text-emerald-400'
+                                  : 'border-zinc-200 bg-zinc-100 text-zinc-500 group-open:border-emerald-300 group-open:bg-emerald-50 group-open:text-emerald-600'">
+                            <flux:icon.plus class="size-3.5" />
+                        </span>
+                    </summary>
+
+                    <div class="border-t px-5 pb-5 pt-4 text-sm leading-relaxed"
+                         :class="dark ? 'border-zinc-800 text-zinc-400' : 'border-zinc-100 text-zinc-500'">
+                        {{ $faq['answer'] }}
                     </div>
-                </section>
+                </details>
+            @endforeach
+        </div>
+
+        {{-- CTA bas --}}
+        <div class="mt-8 rounded-2xl border p-6 text-center"
+             :class="dark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'">
+            <p class="font-semibold text-sm mb-4"
+               :class="dark ? 'text-zinc-200' : 'text-zinc-700'">
+                Vous avez une question spécifique à votre situation ?
+            </p>
+            <a href="#contact"
+               class="inline-flex items-center gap-2 px-7 py-3 rounded-xl font-display font-bold text-sm
+                      bg-emerald-400 text-zinc-900 hover:bg-emerald-500 transition-all
+                      hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/20">
+                Parlez-nous directement
+            </a>
+        </div>
+    </div>
+</section>
 <!-- ===== CTA ===== -->
 <section class="py-24 px-5 transition-colors duration-300" :class="dark ? 'bg-zinc-950' : 'bg-slate-50'">
   <div class="max-w-5xl mx-auto">
@@ -1113,7 +1487,6 @@
   </div>
 </section>
 
-
 <!-- ===== FOOTER ===== -->
  <footer   :class="dark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-white border-zinc-200'">
                 <div class="mx-auto max-w-7xl px-5 lg:px-8">
@@ -1126,10 +1499,10 @@
                             <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Produit</p>
                             <ul class="mt-4 space-y-3">
                                 @foreach ([
-                                    ['label' => 'Tarifs',        'href' => '#offres'],
+                                    ['label' => 'Tarifs',        'href' => '#tarifs'],
                                     ['label' => 'Solution',      'href' => '#solution'],
-                                    ['label' => 'Fonctionnalités','href' => '#solution'],
-                                    ['label' => 'Sécurité',      'href' => '#securite'],
+                                    ['label' => 'Fonctionnalités','href' => '#fonctionnalites'],
+                                    ['label' => 'FAQ',           'href' => '#faq'],
                                 ] as $link)
                                     <li>
                                         <a href="{{ $link['href'] }}" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
@@ -1146,14 +1519,12 @@
                             <p class="text-sm font-black  :class="dark ? 'text-zinc-100' : 'text-zinc-900'">Légal</p>
                             <ul class="mt-4 space-y-3">
                                 @foreach ([
-                                    ['label' => 'CGU',               'route' => 'legal.cgu'],
-                                    ['label' => 'CGV',               'route' => 'legal.cgv'],
-                                    ['label' => 'Code du travail','route' => 'legal.travail'],
-                                    ['label' => 'Politique de cookies','route' => 'legal.cookies'],
+                                    ['label' => 'CGU',               'slug' => 'cgu'],
+                                    ['label' => 'CGV',               'slug' => 'cgv'],
+                                    ['label' => 'Politique de cookies','slug' => 'cookies'],
                                 ] as $link)
                                     <li>
-                                        {{-- {{ route($link['route']) }} --}}
-                                        <a href="#" wire:navigate class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
+                                        <a href="{{ route('legal.show', $link['slug']) }}" class="text-sm text-slate-500 transition hover:text-slate-950 dark:text-zinc-400 dark:hover:text-zinc-50">
                                             {{ $link['label'] }}
                                         </a>
                                     </li>
@@ -1266,5 +1637,8 @@
                 <flux:toast />
             </flux:toast.group>
         @endpersist
+
+
 </body>
 </html>
+
