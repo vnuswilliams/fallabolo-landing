@@ -1,721 +1,685 @@
-Tu vas développer
+# MEGA-PROMPT : PLATEFORME MATCHRH — GUIDELINES DE DÉVELOPPEMENT LARAVEL
 
-# MEGA-PROMPT : PLATEFORME DE MATCHING RH INTELLIGENT
+> Document de référence pour l’IA de coding — Usage interne — Juin 2026
 
-Tu vas développer une plateforme web de matching automatique entre recruteurs et candidats, fonctionnant sur un modèle freemium. L'application doit suggérer des appairages intelligents basés sur des critères précis (salaire, domaine, localisation, compétences) sans gérer la communication directe entre utilisateurs.
+-----
 
-## 1. VISION ET VALEUR DU PROJET
+## 1. VISION ET PÉRIMÈTRE DU PROJET
 
-Tu crées une plateforme SaaS de recrutement intelligent qui :
-- Connecte recruteurs et candidats via un algorithme de matching automatique
-- Fonctionne en mode freemium (limites d'usage pour version gratuite, accès illimité payant)
-- Génère des suggestions pertinentes sans intervalle manuel d'admin/modérateur
-- Stocke des données minimales (pas de CV détaillés, pas de données bancaires)
-- Lance en MVP avec capacité <1 000 utilisateurs simultanés
-- Offre une expérience web mobile-compatible (évolution vers apps natives ultérieure)
+Tu développes **MatchRH**, une plateforme SaaS de recrutement intelligent qui connecte recruteurs et candidats via un algorithme de matching automatique basé sur des critères structurés.
 
-## 2. STACK TECHNIQUE RECOMMANDÉE
+**Ce que la plateforme fait :**
 
-### Backend
-- **Framework** : Node.js + Express (ou Fastify pour performance)
-- **Langage** : TypeScript (typage fort, maintenabilité)
-- **Base de données** : PostgreSQL (relations complexes, matching, performances)
-- **Cache** : Redis (suggestions pré-calculées, sessions, rate limiting)
-- **Authentification** : JWT + refresh tokens + httpOnly cookies
-- **Algorithme de matching** : Logique TypeScript côté serveur (calculé à la demande ou cronjob)
+- Calcule un score de compatibilité `candidat ↔ offre` en temps réel
+- Élimine les candidats non qualifiés via des critères bloquants
+- Classe les candidats qualifiés du plus au moins compatible
+- Affiche le score au candidat AVANT qu’il postule
+- Supprime CV et lettres de motivation du processus principal
 
-### Frontend
-- **Framework** : React 18+ (ou Next.js pour SSR/SSG)
-- **Styling** : Tailwind CSS (rapidité, cohérence)
-- **State management** : TanStack Query (pour requêtes API) + Zustand (état global minimal)
-- **Validation** : Zod ou Yup
-- **Composants** : Shadcn/ui ou Headless UI
+**Ce que la plateforme ne fait PAS (MVP) :**
 
-### Déploiement & Infra
-- **Hosting** : Vercel (frontend), Railway/Render (backend), ou AWS EC2 (simple)
-- **Base de données** : Managed PostgreSQL (Vercel Postgres, Supabase, ou managed)
-- **Monitoring** : Sentry (erreurs), LogRocket (sessions utilisateurs)
-- **CI/CD** : GitHub Actions
-- **Email** : SendGrid ou Resend (notifications, confirmations)
+- Pas de messagerie interne entre recruteurs et candidats
+- Pas de paiement en ligne automatisé (facturation manuelle en MVP)
+- Pas d’IA générative dans le scoring (algorithme déterministe uniquement)
 
-## 3. STRUCTURE DES DOSSIERS ET FICHIERS
+**Stack technique fixe — NE PAS suggérer d’alternatives :**
+
+- **Backend & Frontend :** Laravel 11+ (Blade + Livewire ou Inertia/Vue selon le contexte)
+- **Base de données :** MySQL 8+
+- **Cache & Queues :** Redis
+- **Jobs asynchrones :** Laravel Queue (driver Redis)
+- **Auth :** Laravel Breeze ou Jetstream (selon complexité souhaitée)
+- **Email :** Laravel Mail + Mailtrap (dev) / SMTP production
+- **Paiement :** Laravel Cashier (Stripe) — optionnel MVP
+- **Déploiement :** VPS Linux (Ubuntu), Nginx, PHP-FPM, Supervisor
+
+-----
+
+## 2. ARCHITECTURE LARAVEL — STRUCTURE DES DOSSIERS
+
+Respecte strictement la structure Laravel standard avec les ajouts suivants :
 
 ```
-project-root/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.ts
-│   │   │   ├── env.ts (variables d'environnement)
-│   │   │   └── constants.ts
-│   │   ├── middleware/
-│   │   │   ├── auth.ts (vérification JWT)
-│   │   │   ├── errorHandler.ts
-│   │   │   ├── rateLimit.ts
-│   │   │   └── cors.ts
-│   │   ├── routes/
-│   │   │   ├── auth.ts (login, register, refresh token)
-│   │   │   ├── users.ts (profil recruteur/candidat)
-│   │   │   ├── matching.ts (suggestions, historique)
-│   │   │   ├── subscriptions.ts (freemium, upgrades)
-│   │   │   └── admin.ts (stats, logs)
-│   │   ├── controllers/
-│   │   │   ├── authController.ts
-│   │   │   ├── userController.ts
-│   │   │   ├── matchingController.ts
-│   │   │   └── subscriptionController.ts
-│   │   ├── services/
-│   │   │   ├── userService.ts
-│   │   │   ├── matchingService.ts (algorithme core)
-│   │   │   ├── authService.ts (hash, JWT)
-│   │   │   ├── emailService.ts
-│   │   │   └── cacheService.ts
-│   │   ├── models/
-│   │   │   ├── User.ts (schema validation)
-│   │   │   ├── Recruiter.ts
-│   │   │   ├── Candidate.ts
-│   │   │   ├── Match.ts
-│   │   │   └── Subscription.ts
-│   │   ├── utils/
-│   │   │   ├── validators.ts (emails, salaires, etc.)
-│   │   │   ├── helpers.ts
-│   │   │   └── crypto.ts (chiffrement optionnel)
-│   │   ├── jobs/
-│   │   │   └── matchingCronjob.ts (calcul asynce des suggestions)
-│   │   └── server.ts (entrée principale)
-│   ├── tests/
-│   │   ├── unit/
-│   │   └── integration/
-│   ├── .env.example
-│   ├── docker-compose.yml (PostgreSQL local)
-│   ├── package.json
-│   └── tsconfig.json
+app/
+├── Console/
+│   └── Commands/
+│       └── RunMatchingEngine.php       # Commande artisan pour le moteur de matching
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/                       # Gérés par Breeze/Jetstream
+│   │   ├── RecruiterController.php
+│   │   ├── CandidateController.php
+│   │   ├── JobOfferController.php
+│   │   ├── ApplicationController.php
+│   │   └── DashboardController.php
+│   ├── Middleware/
+│   │   ├── EnsureProfileComplete.php   # Redirige si profil incomplet
+│   │   ├── EnsureRecruiter.php
+│   │   ├── EnsureCandidate.php
+│   │   └── CheckSubscriptionLimit.php  # Freemium : limites d'usage
+│   └── Requests/                       # Form Requests pour validation
+│       ├── StoreJobOfferRequest.php
+│       ├── UpdateCandidateProfileRequest.php
+│       └── StoreApplicationRequest.php
+├── Models/
+│   ├── User.php
+│   ├── RecruiterProfile.php
+│   ├── CandidateProfile.php
+│   ├── JobOffer.php
+│   ├── BlockingCriterion.php
+│   ├── BonusCriterion.php
+│   ├── CandidateSkill.php
+│   ├── Application.php
+│   └── Subscription.php
+├── Services/
+│   ├── Matching/
+│   │   ├── MatchingEngine.php          # Orchestrateur principal — NE PAS exposer la logique
+│   │   ├── BlockingCriteriaChecker.php # Couche 1
+│   │   ├── ScoreCalculator.php         # Couche 2 — Score principal pondéré
+│   │   └── BonusDetector.php           # Couche 3 — Atouts informatifs
+│   ├── NotificationService.php
+│   └── SubscriptionService.php
+├── Jobs/
+│   └── CalculateMatchScoreJob.php      # Job asynchrone — dispatché en queue
+├── Policies/
+│   ├── JobOfferPolicy.php
+│   └── ApplicationPolicy.php
+└── Enums/
+    ├── JobTemplate.php                 # Les 5 templates de poste
+    ├── ExperiencePalier.php
+    ├── FormationLevel.php
+    ├── DisponibilitePalier.php
+    └── SubscriptionPlan.php
 
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Layout/
-│   │   │   │   ├── Header.tsx
-│   │   │   │   ├── Sidebar.tsx
-│   │   │   │   └── Footer.tsx
-│   │   │   ├── Auth/
-│   │   │   │   ├── LoginForm.tsx
-│   │   │   │   ├── RegisterForm.tsx
-│   │   │   │   └── ProtectedRoute.tsx
-│   │   │   ├── Dashboard/
-│   │   │   │   ├── RecruiterDashboard.tsx
-│   │   │   │   └── CandidateDashboard.tsx
-│   │   │   ├── Matching/
-│   │   │   │   ├── MatchingCard.tsx
-│   │   │   │   ├── MatchingList.tsx
-│   │   │   │   └── FilterPanel.tsx
-│   │   │   ├── Profile/
-│   │   │   │   ├── EditProfile.tsx
-│   │   │   │   └── ProfileView.tsx
-│   │   │   ├── Subscription/
-│   │   │   │   ├── PricingPlans.tsx
-│   │   │   │   └── UpgradeModal.tsx
-│   │   │   └── Common/
-│   │   │       ├── Button.tsx
-│   │   │       ├── Card.tsx
-│   │   │       ├── Modal.tsx
-│   │   │       └── Toast.tsx
-│   │   ├── hooks/
-│   │   │   ├── useAuth.ts
-│   │   │   ├── useMatching.ts
-│   │   │   └── useFetch.ts
-│   │   ├── store/
-│   │   │   ├── authStore.ts (Zustand)
-│   │   │   └── userStore.ts
-│   │   ├── api/
-│   │   │   ├── client.ts (axios/fetch config)
-│   │   │   ├── auth.ts
-│   │   │   ├── matching.ts
-│   │   │   └── users.ts
-│   │   ├── pages/
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── RegisterPage.tsx
-│   │   │   ├── DashboardPage.tsx
-│   │   │   ├── MatchingPage.tsx
-│   │   │   ├── ProfilePage.tsx
-│   │   │   └── PricingPage.tsx
-│   │   ├── styles/
-│   │   │   ├── globals.css
-│   │   │   └── variables.css
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── types/
-│   │       └── index.ts (types TypeScript globaux)
-│   ├── public/
-│   ├── .env.example
-│   ├── vite.config.ts
-│   ├── tailwind.config.js
-│   ├── package.json
-│   └── tsconfig.json
+database/
+├── migrations/
+│   ├── create_recruiter_profiles_table.php
+│   ├── create_candidate_profiles_table.php
+│   ├── create_job_offers_table.php
+│   ├── create_blocking_criteria_table.php
+│   ├── create_bonus_criteria_table.php
+│   ├── create_candidate_skills_table.php
+│   ├── create_applications_table.php
+│   └── create_subscriptions_table.php
+└── seeders/
+    ├── SkillLibrarySeeder.php          # Bibliothèque de compétences fixe
+    ├── CriteriaLibrarySeeder.php       # Bibliothèque de critères bloquants
+    └── BonusLibrarySeeder.php          # Bibliothèque d'atouts
 
-├── .gitignore
-├── README.md
-└── docker-compose.yml (toute l'app)
+resources/
+├── views/
+│   ├── layouts/
+│   │   ├── app.blade.php               # Layout principal connecté
+│   │   └── guest.blade.php             # Layout public/auth
+│   ├── recruiter/
+│   │   ├── dashboard.blade.php
+│   │   ├── job-offers/
+│   │   │   ├── index.blade.php
+│   │   │   ├── create.blade.php
+│   │   │   └── show.blade.php
+│   │   └── applications/
+│   │       └── index.blade.php         # Liste candidats classés par score
+│   └── candidate/
+│       ├── dashboard.blade.php
+│       ├── profile/
+│       │   └── edit.blade.php
+│       └── offers/
+│           ├── index.blade.php         # Offres compatibles avec score affiché
+│           └── show.blade.php          # Détail offre + score détaillé avant candidature
+└── livewire/                           # Composants Livewire si utilisés
+    ├── skill-picker.blade.php
+    ├── blocking-criteria-builder.blade.php
+    └── match-score-display.blade.php
 ```
 
-## 4. MODÈLES DE DONNÉES COMPLETS
+-----
 
-### Schéma PostgreSQL
+## 3. MODÈLE DE DONNÉES — MIGRATIONS LARAVEL
 
-```sql
--- Table Users (base de tous les utilisateurs)
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL, -- bcrypt hash
-  role ENUM('recruiter', 'candidate') NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_login TIMESTAMP,
-  is_active BOOLEAN DEFAULT TRUE,
-  is_email_verified BOOLEAN DEFAULT FALSE
-);
+### Table `users` (Laravel standard)
 
--- Table Recruiters
-CREATE TABLE recruiters (
-  id UUID PRIMARY KEY,
-  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-  company_name VARCHAR(255) NOT NULL,
-  company_size ENUM('1-10', '11-50', '51-200', '200+'),
-  industry VARCHAR(100), -- secteur activité
-  job_openings INT DEFAULT 0,
-  hiring_budget_min INT, -- salaire min offert
-  hiring_budget_max INT, -- salaire max offert
-  location_cities TEXT[], -- array de villes
-  preferred_experience_level ENUM('junior', 'mid', 'senior') DEFAULT 'mid',
-  required_skills TEXT[], -- array de compétences
-  bio TEXT,
-  verified_company BOOLEAN DEFAULT FALSE,
-  subscription_plan ENUM('free', 'pro', 'enterprise') DEFAULT 'free',
-  subscription_until TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Table Candidates
-CREATE TABLE candidates (
-  id UUID PRIMARY KEY,
-  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  current_job_title VARCHAR(150),
-  years_experience INT, -- années d'expérience
-  salary_expectation_min INT,
-  salary_expectation_max INT,
-  current_location VARCHAR(255),
-  willing_to_relocate BOOLEAN DEFAULT FALSE,
-  remote_preference ENUM('on-site', 'hybrid', 'remote'),
-  industry_preferences TEXT[], -- array de secteurs
-  technical_skills TEXT[], -- array de compétences
-  soft_skills TEXT[],
-  experience_level ENUM('junior', 'mid', 'senior'),
-  bio TEXT,
-  preferred_industries TEXT[],
-  available_start_date DATE,
-  notice_period INT, -- jours
-  subscription_plan ENUM('free', 'pro', 'enterprise') DEFAULT 'free',
-  subscription_until TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Table Matches (historique des suggestions)
-CREATE TABLE matches (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  recruiter_id UUID NOT NULL REFERENCES recruiters(id) ON DELETE CASCADE,
-  candidate_id UUID NOT NULL REFERENCES candidates(id) ON DELETE CASCADE,
-  match_score DECIMAL(5, 2), -- 0 à 100, pourcentage de compatibilité
-  salary_match BOOLEAN, -- salaire dans fourchette
-  skill_match_count INT, -- nombre de compétences en commun
-  location_match BOOLEAN, -- compatible géographiquement
-  experience_match BOOLEAN, -- niveau compatible
-  matching_reasons TEXT[], -- raisons du matching
-  status ENUM('suggested', 'viewed', 'rejected', 'contacted_external') DEFAULT 'suggested',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  viewed_at TIMESTAMP,
-  UNIQUE(recruiter_id, candidate_id)
-);
-
--- Table Subscriptions
-CREATE TABLE subscriptions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-  plan ENUM('free', 'pro', 'enterprise') NOT NULL,
-  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  expires_at TIMESTAMP,
-  renewal_auto BOOLEAN DEFAULT FALSE,
-  payment_method VARCHAR(50), -- 'card', 'paypal', etc.
-  stripe_subscription_id VARCHAR(255), -- optionnel
-  status ENUM('active', 'canceled', 'expired') DEFAULT 'active'
-);
-
--- Table API Keys (pour éventuels partenaires)
-CREATE TABLE api_keys (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  key_hash VARCHAR(255) NOT NULL UNIQUE,
-  name VARCHAR(100),
-  last_used TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  is_active BOOLEAN DEFAULT TRUE
-);
-
--- Indexes pour performances
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_recruiters_user_id ON recruiters(user_id);
-CREATE INDEX idx_candidates_user_id ON candidates(user_id);
-CREATE INDEX idx_matches_recruiter ON matches(recruiter_id);
-CREATE INDEX idx_matches_candidate ON matches(candidate_id);
-CREATE INDEX idx_matches_created ON matches(created_at DESC);
-CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
+```php
+// Champs additionnels à ajouter via migration
+$table->enum('role', ['recruiter', 'candidate'])->after('email');
+$table->boolean('email_verified')->default(false);
+$table->timestamp('last_login_at')->nullable();
 ```
 
-### Types TypeScript Globaux
+### Table `recruiter_profiles`
 
-```typescript
-// types/index.ts
-
-export type Role = 'recruiter' | 'candidate';
-export type SubscriptionPlan = 'free' | 'pro' | 'enterprise';
-export type ExperienceLevel = 'junior' | 'mid' | 'senior';
-export type RemotePreference = 'on-site' | 'hybrid' | 'remote';
-export type MatchStatus = 'suggested' | 'viewed' | 'rejected' | 'contacted_external';
-
-export interface User {
-  id: string;
-  email: string;
-  role: Role;
-  createdAt: Date;
-  updatedAt: Date;
-  lastLogin?: Date;
-  isActive: boolean;
-  isEmailVerified: boolean;
-}
-
-export interface Recruiter extends User {
-  companyName: string;
-  companySize?: string;
-  industry?: string;
-  jobOpenings: number;
-  hiringBudgetMin?: number;
-  hiringBudgetMax?: number;
-  locationCities: string[];
-  preferredExperienceLevel: ExperienceLevel;
-  requiredSkills: string[];
-  bio?: string;
-  verifiedCompany: boolean;
-  subscriptionPlan: SubscriptionPlan;
-  subscriptionUntil?: Date;
-}
-
-export interface Candidate extends User {
-  firstName: string;
-  lastName: string;
-  currentJobTitle?: string;
-  yearsExperience: number;
-  salaryExpectationMin?: number;
-  salaryExpectationMax?: number;
-  currentLocation: string;
-  willingToRelocate: boolean;
-  remotePreference: RemotePreference;
-  industryPreferences: string[];
-  technicalSkills: string[];
-  softSkills: string[];
-  experienceLevel: ExperienceLevel;
-  bio?: string;
-  preferredIndustries: string[];
-  availableStartDate?: Date;
-  noticePeriod: number;
-  subscriptionPlan: SubscriptionPlan;
-  subscriptionUntil?: Date;
-}
-
-export interface Match {
-  id: string;
-  recruiterId: string;
-  candidateId: string;
-  matchScore: number; // 0-100
-  salaryMatch: boolean;
-  skillMatchCount: number;
-  locationMatch: boolean;
-  experienceMatch: boolean;
-  matchingReasons: string[];
-  status: MatchStatus;
-  createdAt: Date;
-  viewedAt?: Date;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  role: Role;
-  // Champs additionnels spécifiques au rôle
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
+```php
+$table->id();
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+$table->string('company_name');
+$table->string('company_size')->nullable();    // '1-10', '11-50', etc.
+$table->string('industry')->nullable();
+$table->string('city');
+$table->string('country')->default('CM');
+$table->boolean('is_verified')->default(false);
+$table->timestamps();
 ```
+
+### Table `candidate_profiles`
+
+```php
+$table->id();
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+$table->string('first_name');
+$table->string('last_name');
+$table->string('main_job_title')->nullable();
+$table->tinyInteger('experience_palier');      // 0=sans, 1=1-2ans, 2=3-4ans, 3=5-10ans, 4=+10ans
+$table->tinyInteger('formation_level');        // 0=aucun, 1=CEPC, 2=BEPC, 3=BAC, 4=BTS/DUT, 5=Licence, 6=Master, 7=Doctorat
+$table->tinyInteger('disponibilite_palier');   // 0=immédiate, 1=15j, 2=30j, 3=plus
+$table->string('city');
+$table->string('region')->nullable();
+$table->string('country')->default('CM');
+$table->unsignedInteger('salary_min')->nullable();
+$table->unsignedInteger('salary_max')->nullable();
+$table->enum('langue_mode', ['francophone', 'anglophone', 'bilingue'])->default('bilingue');
+$table->boolean('profile_complete')->default(false);
+$table->timestamps();
+```
+
+### Table `candidate_skills`
+
+```php
+$table->id();
+$table->foreignId('candidate_profile_id')->constrained()->onDelete('cascade');
+$table->foreignId('skill_id')->constrained();   // Référence bibliothèque fixe
+$table->tinyInteger('level');                    // 1 à 5
+$table->timestamps();
+```
+
+### Table `job_offers`
+
+```php
+$table->id();
+$table->foreignId('recruiter_profile_id')->constrained()->onDelete('cascade');
+$table->string('title');
+$table->text('description')->nullable();
+$table->enum('template', ['manouvre', 'technicien', 'agent_maitrise', 'cadre', 'dirigeant']);
+$table->string('city');
+$table->string('region')->nullable();
+$table->string('country')->default('CM');
+$table->tinyInteger('experience_required_palier');
+$table->tinyInteger('formation_required_level');
+$table->tinyInteger('disponibilite_max_palier');
+$table->enum('langue_mode', ['francophone', 'anglophone', 'bilingue'])->default('bilingue');
+$table->unsignedInteger('salary_budget_min')->nullable();
+$table->unsignedInteger('salary_budget_max')->nullable();
+$table->enum('status', ['draft', 'published', 'closed'])->default('draft');
+$table->timestamps();
+$table->softDeletes();
+```
+
+### Table `job_offer_skills` (compétences requises par offre)
+
+```php
+$table->id();
+$table->foreignId('job_offer_id')->constrained()->onDelete('cascade');
+$table->foreignId('skill_id')->constrained();
+$table->tinyInteger('level_required');   // 1 à 5
+$table->timestamps();
+```
+
+### Table `blocking_criteria` (critères bloquants par offre)
+
+```php
+$table->id();
+$table->foreignId('job_offer_id')->constrained()->onDelete('cascade');
+$table->foreignId('criterion_id')->constrained('criteria_library');  // Bibliothèque fixe
+$table->string('value')->nullable();   // Ex: "B" pour permis B, "30" pour dispo max
+$table->timestamps();
+```
+
+### Table `bonus_criteria` (atouts recherchés par offre)
+
+```php
+$table->id();
+$table->foreignId('job_offer_id')->constrained()->onDelete('cascade');
+$table->foreignId('bonus_id')->constrained('bonus_library');
+$table->enum('priority', ['faible', 'moyen', 'fort']);
+$table->timestamps();
+```
+
+### Table `applications` (candidatures)
+
+```php
+$table->id();
+$table->foreignId('job_offer_id')->constrained()->onDelete('cascade');
+$table->foreignId('candidate_profile_id')->constrained()->onDelete('cascade');
+$table->decimal('score_principal', 5, 2)->default(0);   // Score couche 2 (0-100)
+$table->boolean('blocked')->default(false);              // Couche 1 échouée
+$table->string('blocked_reason')->nullable();
+$table->json('score_detail')->nullable();                // Détail par bloc (JSON)
+$table->json('atouts_detected')->nullable();             // Couche 3 informatif
+$table->enum('status', ['pending', 'viewed', 'shortlisted', 'rejected'])->default('pending');
+$table->timestamp('viewed_at')->nullable();
+$table->unique(['job_offer_id', 'candidate_profile_id']);
+$table->timestamps();
+```
+
+### Table `subscriptions`
+
+```php
+$table->id();
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+$table->enum('plan', ['free', 'pro', 'enterprise'])->default('free');
+$table->timestamp('started_at')->useCurrent();
+$table->timestamp('expires_at')->nullable();
+$table->enum('status', ['active', 'canceled', 'expired'])->default('active');
+$table->timestamps();
+```
+
+-----
+
+## 4. L’ALGORITHME DE MATCHING — RÈGLES ABSOLUES
+
+> ⚠️ L’algorithme est le cœur compétitif de MatchRH. Ces règles ne sont JAMAIS contournées.
+
+### Architecture en 3 couches
+
+**Couche 1 — Critères bloquants** (`BlockingCriteriaChecker.php`)
+
+- Vérifiés en premier, avant tout calcul
+- Si UN SEUL critère échoue → `score = 0`, `blocked = true`, processus terminé
+- Exemples : langue, permis, diplôme minimum, disponibilité maximale
+
+**Couche 2 — Score principal pondéré** (`ScoreCalculator.php`)
+
+- Score entre 0% et 100%
+- Formule : `score_bloc = e^(-λ × écart)` (pénalité exponentielle)
+- Les pondérations et les lambda sont **fixes par template** — le recruteur ne peut pas les modifier
+- Blocs : Compétences, Expérience, Formation, Disponibilité, Localisation, Salaire
+
+**Couche 3 — Atouts** (`BonusDetector.php`)
+
+- N’entre dans AUCUN calcul de score
+- Affichage informatif uniquement
+- Deux catégories : atouts recherchés (définis recruteur) + compétences supplémentaires (auto-détectées)
+
+### Les 5 templates — Pondérations et Lambda
+
+|Bloc             |Manœuvre  |Technicien|Agent maîtrise|Cadre     |Dirigeant |
+|-----------------|----------|----------|--------------|----------|----------|
+|**Compétences**  |30% / λ0.2|45% / λ0.4|40% / λ0.6    |35% / λ0.8|25% / λ1.0|
+|**Expérience**   |25% / λ0.2|25% / λ0.4|30% / λ0.6    |35% / λ0.8|45% / λ1.0|
+|**Formation**    |5% / λ0.2 |10% / λ0.4|10% / λ0.6    |15% / λ0.8|15% / λ1.0|
+|**Disponibilité**|20% / λ0.1|10% / λ0.1|8% / λ0.2     |4% / λ0.2 |3% / λ0.3 |
+|**Localisation** |15% / λ0.1|5% / λ0.1 |7% / λ0.2     |3% / λ0.2 |2% / λ0.3 |
+|**Salaire**      |5% / λ0.1 |5% / λ0.1 |5% / λ0.2     |8% / λ0.3 |10% / λ0.4|
+
+### Calcul du bloc compétences (pondération par niveau requis)
+
+```
+score_compétence_i = e^(-λ × max(0, niveau_requis_i - niveau_candidat_i))
+score_bloc = Σ(score_compétence_i × niveau_requis_i) / Σ(niveau_requis_i)
+```
+
+### Calcul du bloc salaire
+
+```
+chevauchement = min(budget_max, salary_max) - max(budget_min, salary_min)
+Si chevauchement ≥ 0 → score 100%
+Si salary_max < budget_min → score 100% (recruteur peut négocier à la hausse)
+Si chevauchement < 0 → écart_normalisé = |chevauchement| / budget_max
+                       score = e^(-λ × écart_normalisé)
+```
+
+### Règles d’implémentation obligatoires
+
+- Les constantes lambda et les pondérations doivent être dans des **fichiers de config** (`config/matching.php`), pas en dur dans le code
+- Le `MatchingEngine` doit être invocable en **synchrone** (pour affichage immédiat du score) ET en **asynchrone** via `CalculateMatchScoreJob`
+- Le détail du calcul par bloc est **stocké en JSON** dans `applications.score_detail` pour l’affichage côté recruteur et candidat
+- **Jamais exposer** les valeurs de lambda ou les formules dans les vues Blade ou les réponses JSON publiques
+
+-----
 
 ## 5. FONCTIONNALITÉS DÉTAILLÉES ET RÈGLES MÉTIER
 
-### Module 5.1 : Authentification & Autorisation
+### Module 5.1 — Authentification & Rôles
 
-**Fonctionnalités :**
-- Inscription avec email + mot de passe (rôle recruteur ou candidat)
-- Vérification email (lien de confirmation)
-- Login avec JWT (accès token 15min) + refresh token (7 jours en httpOnly cookie)
-- Logout et révocation de token
-- Récupération de mot de passe (lien temporaire 1h)
-- Authentification multi-facteurs (optionnel MVP v2)
+**Implémentation Laravel :**
+
+- Utiliser Laravel Breeze (simple) ou Jetstream (si 2FA requis)
+- Middleware custom `EnsureRecruiter` et `EnsureCandidate` — utiliser `$request->user()->role`
+- Après inscription, rediriger vers la completion de profil obligatoire
 
 **Règles métier :**
-- Mot de passe : min 12 caractères, majuscule, minuscule, chiffre, caractère spécial
-- Email unique dans la DB
-- Token JWT contient : userId, role, expiresAt
-- Refresh token stocké en BD avec hash, comparaison sécurisée
-- Rate limiting : 5 tentatives de login en 15 min par IP
-- Session utilisateur : timeout 30 jours inactivité
 
-**Sécurité :**
-- Hash bcrypt (rounds=12) pour tous les mots de passe
-- HTTPS obligatoire en production
-- Headers : Strict-Transport-Security, X-Content-Type-Options: nosniff, X-Frame-Options: DENY
-- CSRF token pour les formulaires POST/PUT/DELETE (cookie + body)
-- Pas de données sensibles en localStorage (tokens en httpOnly cookies)
-- Valider et sanitiser tous les inputs (Zod backend + frontend)
-- SQL injection : requêtes paramétrées + ORM (Prisma, TypeORM)
+- Email unique, vérifié avant accès complet
+- Mot de passe : min 8 caractères (adapter selon politique locale)
+- Un user a soit un `RecruiterProfile` soit un `CandidateProfile` — jamais les deux
+- Rate limiting sur login : `RateLimiter::for('login', ...)` dans `AppServiceProvider`
 
-### Module 5.2 : Gestion des Profils Utilisateurs
+**Routes à protéger :**
 
-**Recruteur :**
-- Créer/éditer profil entreprise (nom, taille, secteur, localisation, budget salarial)
-- Lister les critères de recherche (compétences, secteurs, niveaux d'expérience)
-- Ajouter/supprimer offres d'emploi (optionnel MVP, juste pour contexte)
-- Voir suggestions de matching (nombre limité en freemium)
-- Marquer candidats comme "vu" ou "rejeté"
-
-**Candidat :**
-- Créer/éditer profil personnel (expérience, compétences, attentes salariales, localisation, préférences)
-- Lister préférences de recherche (secteurs, localités, télétravail)
-- Voir suggestions de matching (nombre limité en freemium)
-- Marquer recruteurs comme "intéressé" ou "non pertinent"
-
-**Règles métier :**
-- Profil incomplet → limiter les suggestions de matching (max 30% suggestions)
-- Candidat doit avoir au minimum : nom, prénom, localisation, compétences (3+), expérience
-- Recruteur doit avoir : nom entreprise, localisation, budget, secteur
-- Données immutables : créatedAt, userId
-- Édition : updatedAt mis à jour, historique optionnel
-- Suppression compte → anonymiser données (RGPD), garder matches historiques
-
-### Module 5.3 : Algorithme de Matching Intelligent
-
-**Critères de scoring (pondérés) :**
-
-```
-match_score = (
-  salary_compatibility * 0.30 +
-  skill_alignment * 0.35 +
-  location_fit * 0.15 +
-  experience_match * 0.15 +
-  industry_preference * 0.05
-) * 100
+```php
+// routes/web.php
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware('role:recruiter')->prefix('recruteur')->group(...);
+    Route::middleware('role:candidate')->prefix('candidat')->group(...);
+});
 ```
 
-**Détail des critères :**
+-----
 
-1. **Salaire (30%)** :
-   - Fourchette candidat chevauchant fourchette recruteur → 100%
-   - Écart <20% → 80%
-   - Écart 20-40% → 50%
-   - Écart >40% → 0%
+### Module 5.2 — Profils Utilisateurs
 
-2. **Compétences techniques (35%)** :
-   - Intersection(skills_candidat, skills_recruiter) / max(len, lenRec) * 100
-   - Minimum 2 compétences en commun
-   - Pondération : skills requis = +10%, skills additionnels = +5%
+**Candidat — Champs obligatoires pour activer le matching :**
 
-3. **Localisation (15%)** :
-   - Candidat dans ville recruiter → 100%
-   - Candidat dispose-t-il remote si offre remote → 50%
-   - Candidat willing_to_relocate + compatible → 70%
-   - Sinon → 0%
+- Prénom, Nom, Ville, Pays
+- Au moins 1 compétence avec niveau
+- Palier d’expérience
+- Niveau de formation
+- Disponibilité
+- Mode langue (francophone / anglophone / bilingue)
 
-4. **Expérience (15%)** :
-   - Exact match (junior→junior, etc.) → 100%
-   - Un cran écart (junior vers mid) → 80%
-   - Deux crans+ → 40%
+**Recruteur — Champs obligatoires pour publier une offre :**
 
-5. **Industrie (5%)** :
-   - Intersection secteurs → 100%, sinon 0%
+- Nom de l’entreprise, Ville, Pays
+- L’offre elle-même doit avoir au moins 1 compétence requise et 1 critère bloquant
 
-**Seuil minimum de matching :** score ≥ 35 pour suggestion, affichage si score ≥ 50 par défaut
+**Middleware `EnsureProfileComplete` :**
 
-**Exécution :**
-- Cronjob toutes les heures : calcul matches pour tous les recruteurs actifs
-- Cache Redis : résultats 6h (invalidation si profil modifié)
-- Async job pour ne pas bloquer requêtes utilisateurs
+- Vérifie `candidate_profiles.profile_complete = true` avant d’accéder aux offres
+- Si incomplet → redirect vers `candidate.profile.edit` avec message flash
 
-**Règles métier :**
-- Chaque recruteur voit max 5 suggestions/jour en freemium (illimité en pro)
-- Chaque candidat voit max 5 suggestions/jour en freemium (illimité en pro)
-- Un match recruteur→candidat ne doit apparaître qu'une fois (UNIQUE constraint)
-- Matches expirés après 30 jours (statut "expired")
-- Pas de duplicate suggestions (vérifier candidateId + recruiterId)
+-----
 
-### Module 5.4 : Système Freemium & Abonnements
+### Module 5.3 — Offres d’Emploi
 
-**Plans :**
+**Création d’offre — Étapes (wizard multi-step recommandé avec Livewire) :**
 
-| Feature | Free | Pro | Enterprise |
-|---------|------|-----|------------|
-| Suggestions/jour | 5 | Illimité | Illimité + API |
-| Profil | Oui | Oui | Oui |
-| Historique matches | 30 jours | 1 an | Illimité |
-| Support | Email 48h | Chat temps réel | Dédié |
-| Export données | Non | CSV | API + JSON |
-| Tarif | 0€ | 29€/mois | Devis |
+1. Choix du template de poste (détermine pondérations et lambda)
+1. Informations générales (titre, description, localisation, salaire, langue)
+1. Compétences requises (sélection depuis bibliothèque + niveau 1-5)
+1. Critères bloquants (sélection depuis bibliothèque + valeur si applicable)
+1. Atouts recherchés / bonus (optionnel, depuis bibliothèque + priorité)
+1. Récapitulatif → Publication
 
 **Règles métier :**
-- Freemium actif par défaut à l'inscription
-- Passage Pro : paiement mensuel ou annuel (-20%)
-- Renouvellement auto si payment_method valide
-- Downgrade possible fin de mois (remboursement prorata si annual)
-- Limite API : 1000 req/jour freemium, 10k req/jour pro
-- Email de rappel : 7j avant expiration (2 emails)
 
-**Gestion des limites :**
-```typescript
-// Vérifier si user peut voir suggestions
-const canViewMatches = (user: User): boolean => {
-  const plan = user.subscriptionPlan;
-  const suggestionsToday = await countSuggestionsToday(user.id);
-  
-  if (plan === 'free') return suggestionsToday < 5;
-  return true; // pro/enterprise
-};
+- Un recruteur FREE peut publier **2 offres actives** simultanément
+- Un recruteur PRO : **illimité**
+- Une offre publiée déclenche automatiquement le calcul de matching (`CalculateMatchScoreJob::dispatch($jobOffer)`)
+- Une offre fermée (`status = closed`) n’apparaît plus dans les résultats candidats
+
+-----
+
+### Module 5.4 — Candidature et Matching
+
+**Flux de candidature côté candidat :**
+
+1. Candidat browse les offres → score de compatibilité affiché sur la card
+1. Candidat ouvre le détail → score détaillé par bloc + atouts détectés
+1. Candidat clique “Je suis intéressé” → validation des critères bloquants en temps réel
+1. Si tous les bloquants OK → candidature enregistrée dans `applications`
+1. Recruteur notifié par email groupé (digest quotidien)
+
+**Flux de consultation côté recruteur :**
+
+- Dashboard offre → liste des candidatures classées par `score_principal DESC`
+- Affichage : nom (anonymisé en FREE), score %, atouts détectés, statut
+- Recruteur PRO : nom complet + contact + détail complet du score
+
+**Règles métier importantes :**
+
+- Le score est calculé une fois à la candidature et **stocké** — il n’est pas recalculé à chaque consultation
+- Si le candidat met à jour son profil APRÈS avoir postulé, le score n’est PAS automatiquement mis à jour (le score reflète le profil au moment de la candidature)
+- Un candidat ne peut pas postuler deux fois à la même offre (`UNIQUE` constraint)
+
+-----
+
+### Module 5.5 — Notifications
+
+**Events & Listeners Laravel (ne pas utiliser de package tiers en MVP) :**
+
+|Event                 |Listener                         |Déclencheur         |
+|----------------------|---------------------------------|--------------------|
+|`ApplicationSubmitted`|`NotifyRecruiterOfNewApplication`|Nouvelle candidature|
+|`JobOfferPublished`   |`CalculateInitialMatches`        |Publication d’offre |
+|`UserRegistered`      |`SendWelcomeEmail`               |Inscription         |
+
+**Notifications email :**
+
+- Digest quotidien recruteur (résumé des nouvelles candidatures qualifiées du jour)
+- Email de bienvenue candidat avec guide de completion de profil
+- Rappel recruteur si offre publiée depuis 7j sans candidature qualifiée
+
+**Implémentation :**
+
+```php
+// Utiliser Laravel Notifications avec le channel 'mail'
+// Scheduler dans app/Console/Kernel.php
+$schedule->job(new SendRecruiterDailyDigest)->dailyAt('08:00');
 ```
 
-### Module 5.5 : Notifications & Communication
+-----
 
-**Notifications (email) :**
-- Confirmation d'email (signup)
-- Suggestion de matching (1 email/jour groupé, max 5)
-- Profil vu par recruteur (optionnel, anonyme)
-- Abonnement expire dans 7j
-- Nouvel abonnement confirmé
+### Module 5.6 — Freemium & Abonnements
 
-**Règles métier :**
-- Fréquence max : 1 email/jour par utilisateur (sauf critical)
-- Désabonnement possible (unsubscribe link)
-- Pas de SMS (MVP)
+**Plans MVP :**
 
-### Module 5.6 : Dashboard & Statistiques
+|Feature                    |Gratuit|Pro (49 000 FCFA/mois)|Entreprise|
+|---------------------------|-------|----------------------|----------|
+|Offres actives             |2      |Illimité              |Illimité  |
+|Candidatures visibles/offre|10     |Illimité              |Illimité  |
+|Identité candidats         |Masquée|Complète              |Complète  |
+|Détail score par bloc      |Non    |Oui                   |Oui       |
+|Export CSV                 |Non    |Oui                   |Oui       |
+|Support                    |Email  |Prioritaire           |Dédié     |
 
-**Recruiter Dashboard :**
-- Nombre de suggestions générées ce mois
-- Taux d'action (vus / rejetés / suggestions)
-- Qualité moyennes des matches
-- Filtrer/chercher candidats dans historique
+**Implémentation Laravel :**
 
-**Candidate Dashboard :**
-- Nombre de suggestions générées ce mois
-- Profils de recruteurs intéressants
-- Statistiques profil (vue/jour)
+- `CheckSubscriptionLimit` middleware vérifie le plan avant chaque action limitée
+- Middleware injecte `$user->subscription` via `with()` dans le controller
+- En MVP : facturation manuelle → `subscription.plan` mis à jour manuellement par admin
+- Prévoir `SubscriptionService::upgrade($user, $plan)` pour future intégration Cashier/Stripe
 
-**Admin Dashboard (optionnel MVP) :**
-- Nombre utilisateurs (recruteurs/candidats)
-- Activité globale (matches créés/jour)
-- Revenue (abonnements)
-- Santé serveur (uptime, latence DB)
+-----
 
-## 6. GESTION DES RÔLES ET PERMISSIONS
+## 6. SÉCURITÉ — RÈGLES NON NÉGOCIABLES
 
-```typescript
-// services/authService.ts - ACL (Access Control List)
+### Validation
 
-interface Permission {
-  resource: string; // 'matching', 'profile', 'subscription'
-  action: string; // 'view', 'create', 'edit', 'delete'
-  condition?: (user: User, context: any) => boolean;
-}
+- **Toujours** utiliser des `FormRequest` pour toute requête POST/PUT — jamais valider dans le controller
+- Utiliser `$table->unsignedTinyInteger()` pour les niveaux et paliers — rejeter toute valeur hors plage
+- Sanitiser toutes les entrées texte libres avec `strip_tags()`
 
-const PERMISSIONS: Record<Role, Permission[]> = {
-  candidate: [
-    { resource: 'profile', action: 'view', condition: (u, ctx) => u.id === ctx.profileId },
-    { resource: 'profile', action: 'edit', condition: (u, ctx) => u.id === ctx.profileId },
-    { resource: 'matching', action: 'view' },
-    { resource: 'matching', action: 'reject' },
-    { resource: 'subscription', action: 'view' },
-    { resource: 'subscription', action: 'upgrade' },
-  ],
-  recruiter: [
-    { resource: 'profile', action: 'view', condition: (u, ctx) => u.id === ctx.profileId },
-    { resource: 'profile', action: 'edit', condition: (u, ctx) => u.id === ctx.profileId },
-    { resource: 'matching', action: 'view' },
-    { resource: 'matching', action: 'mark_as_viewed' },
-    { resource: 'subscription', action: 'view' },
-    { resource: 'subscription', action: 'upgrade' },
-  ],
-};
+### Autorisation
 
-// Middleware : vérifier permission
-export const authorize = (resource: string, action: string) => {
-  return async (req, res, next) => {
-    const user = req.user; // via JWT middleware
-    const userPerms = PERMISSIONS[user.role];
-    const permitted = userPerms.some(p => 
-      p.resource === resource && 
-      p.action === action && 
-      (!p.condition || p.condition(user, req.body || req.params))
-    );
-    
-    if (!permitted) return res.status(403).json({ error: 'Forbidden' });
-    next();
-  };
-};
+- Utiliser les **Laravel Policies** pour toute action sur une ressource (ex: `JobOfferPolicy::update`)
+- Un recruteur ne voit JAMAIS les offres ou données d’un autre recruteur
+- Un candidat ne voit JAMAIS les données d’un autre candidat
+- Vérification dans les policies : `$user->id === $recruiterProfile->user_id`
+
+### Protection des données (Loi camerounaise 2024)
+
+- Les données candidats sont déclaratives — l’afficher clairement dans les CGU
+- Permettre la suppression de compte → anonymiser `candidate_profiles` (name → “Utilisateur supprimé”, email → null)
+- Ne pas logger les scores et détails de matching dans les fichiers de log Laravel
+
+### Sécurité générale
+
+- CSRF activé par défaut sur toutes les routes web (ne pas désactiver)
+- Rate limiting sur les routes d’auth et de candidature
+- `APP_ENV=production` et `APP_DEBUG=false` en production — vérifier avant déploiement
+- Headers de sécurité dans la config Nginx (X-Frame-Options, X-Content-Type-Options, etc.)
+
+-----
+
+## 7. PERFORMANCE & ARCHITECTURE
+
+### Indexation base de données (à ajouter dans les migrations)
+
+```php
+// Table applications — requêtes fréquentes
+$table->index(['job_offer_id', 'score_principal']); // Classement par score
+$table->index(['candidate_profile_id', 'status']);
+
+// Table candidate_skills
+$table->index(['candidate_profile_id', 'skill_id']);
+
+// Table job_offers
+$table->index(['status', 'created_at']);
+$table->index(['recruiter_profile_id', 'status']);
 ```
 
-**Matrice d'accès :**
+### Cache Redis
 
-| Ressource | Candidat | Recruteur | Admin |
-|-----------|----------|-----------|-------|
-| Son profil | RW | RW | R |
-| Autres profils | R (anonyme) | R (anonyme) | RW |
-| Ses suggestions | R | R | R |
-| Validation profil | - | - | RW |
-| Statistiques | R | R | RW |
-| Gestion abonnements | R | R | RW |
+```php
+// Mettre en cache les résultats de matching 6h
+// Invalider si candidat modifie son profil
+Cache::tags(['matching', "candidate_{$candidateId}"])->remember(
+    "score_{$offerId}_{$candidateId}",
+    now()->addHours(6),
+    fn() => $this->matchingEngine->calculate($offer, $candidate)
+);
+```
 
-## 7. DESIGN SYSTEM
+### Queues pour les calculs lourds
 
-### Palette de couleurs
+```php
+// Dispatcher le calcul en queue — ne jamais bloquer la requête HTTP
+CalculateMatchScoreJob::dispatch($jobOffer)
+    ->onQueue('matching')
+    ->delay(now()->addSeconds(5)); // Petit délai pour laisser la transaction se finaliser
+```
+
+### Configuration Supervisor (production)
+
+```ini
+[program:matchrh-worker]
+command=php /var/www/matchrh/artisan queue:work redis --queue=matching,default --tries=3
+numprocs=2
+autostart=true
+autorestart=true
+```
+
+-----
+
+## 8. DESIGN SYSTEM — IDENTITÉ VISUELLE
+
+### Palette (cohérente avec la landing page)
 
 ```css
-/* Primaires */
---color-primary: #6366F1; /* Indigo (confiance pro) */
---color-primary-dark: #4F46E5;
---color-primary-light: #818CF8;
+/* Variables CSS — à inclure dans app.blade.php */
+:root {
+    --color-bg-primary: #0a0a0f;          /* Fond principal sombre */
+    --color-bg-secondary: #12121a;         /* Cartes et sections */
+    --color-bg-tertiary: #1a1a26;          /* Inputs, tableaux */
+    --color-accent-gold: #c9a84c;          /* Or — accent principal */
+    --color-accent-amber: #e8c46a;         /* Ambre — hover états */
+    --color-text-primary: #f5f0e8;         /* Blanc cassé */
+    --color-text-secondary: #a89880;       /* Gris doré */
+    --color-border: rgba(201, 168, 76, 0.2); /* Bordures subtiles */
 
-/* Secondaires */
---color-success: #10B981; /* Vert (match) */
---color-warning: #F59E0B; /* Ambre (attention) */
---color-danger: #EF4444; /* Rouge (rejet) */
---color-info: #3B82F6; /* Bleu (infos) */
-
-/* Neutres */
---color-bg-primary: #FFFFFF;
---color-bg-secondary: #F9FAFB;
---color-bg-tertiary: #F3F4F6;
---color-text-primary: #111827;
---color-text-secondary: #6B7280;
---color-text-tertiary: #9CA3AF;
---color-border: #E5E7EB;
-
-/* Sémantique */
---color-match-positive: #10B981; /* Vert pour match > 70% */
---color-match-neutral: #F59E0B; /* Ambre pour 50-70% */
---color-match-negative: #EF4444; /* Rouge pour < 50% */
+    /* Sémantique matching */
+    --color-score-high: #10b981;           /* Score ≥ 70% — vert */
+    --color-score-mid: #f59e0b;            /* Score 50-70% — ambre */
+    --color-score-low: #ef4444;            /* Score < 50% — rouge */
+    --color-blocked: #6b7280;              /* Candidature bloquée — gris */
+}
 ```
 
 ### Typographie
 
 ```css
-/* Fonts */
-font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+/* Titres : Cormorant Garamond (élégance) */
+/* Corps : DM Sans (lisibilité) */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap');
 
-/* Échelle */
---font-size-xs: 0.75rem; /* 12px */
---font-size-sm: 0.875rem; /* 14px */
---font-size-base: 1rem; /* 16px */
---font-size-lg: 1.125rem; /* 18px */
---font-size-xl: 1.25rem; /* 20px */
---font-size-2xl: 1.5rem; /* 24px */
---font-size-3xl: 1.875rem; /* 30px */
-
-/* Poids */
---font-weight-normal: 400;
---font-weight-medium: 500;
---font-weight-semibold: 600;
---font-weight-bold: 700;
-
-/* Line heights */
---line-height-tight: 1.2;
---line-height-normal: 1.5;
---line-height-relaxed: 1.75;
+body { font-family: 'DM Sans', sans-serif; }
+h1, h2, h3 { font-family: 'Cormorant Garamond', serif; }
 ```
 
-### Composants UI de base
+### Composant score — Affichage cohérent
 
-**Button** :
-- Variant : primary, secondary, danger, ghost
-- Size : sm, md, lg
-- State : default, hover, active, disabled, loading
-- Interaction : ripple effect, 200ms transition
+Le score doit toujours être affiché avec :
 
-**Card** :
-- Padding : 24px
-- Border radius : 8px
-- Box shadow : 0 1px 3px rgba(0,0,0,0.1)
-- Hover : shadow augmente
+- Le pourcentage en grand (chiffre principal)
+- Une couleur sémantique (vert/ambre/rouge)
+- Le détail par bloc en dessous (recruteur PRO uniquement)
+- Les atouts en section séparée avec icônes ✓ / ✗
 
-**Input** :
-- Border : 1px solid --color-border
-- Border radius : 6px
-- Focus : border-color → primary, outline none
-- Placeholder : --color-text-tertiary
-- Disabled : background grisé, opacity 0.5
+-----
 
-**Modal** :
-- Backdrop : rgba(0,0,0,0.5)
-- Animation : scale 0.95→1, opacity 0→1, 200ms
-- Close button : top-right
+## 9. CONVENTIONS DE CODE LARAVEL
 
-**Toast** :
-- Position : bottom-right
-- Auto-hide : 5s
-- Couleur par type : success (vert), error (rouge), info (bleu)
+### Nommage
 
-### Spacing scale
+- **Models** : PascalCase singulier (`JobOffer`, `CandidateProfile`)
+- **Controllers** : PascalCase + `Controller` (`JobOfferController`)
+- **Routes** : kebab-case (`/offres-emploi/{id}`)
+- **Variables** : camelCase dans PHP, snake_case dans les migrations et colonnes DB
+- **Routes nommées** : `recruiter.offers.index`, `candidate.profile.edit`
 
-```
-4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px
-```
+### Controllers — Règle de légèreté
 
-### Breakpoints responsive
+- Le controller ne contient PAS de logique métier — il délègue au Service
+- Maximum : récupérer la requête, appeler le service, retourner la vue
 
-```
-Mobile: < 640px (sm)
-Tablet: 640px - 1024px (md)
-Desktop: 1024px+ (lg)
-Wide: 1280px+ (xl)
+```php
+// ✅ Correct
+public function store(StoreJobOfferRequest $request, JobOfferService $service)
+{
+    $offer = $service->create($request->validated(), auth()->user());
+    return redirect()->route('recruiter.offers.show', $offer)->with('success', 'Offre publiée.');
+}
+
+// ❌ Incorrect — logique métier dans le controller
+public function store(Request $request)
+{
+    $lambda = config('matching.templates.cadre.competences.lambda');
+    // ... 50 lignes de calcul ici
+}
 ```
 
-## 8. CAS LIMITES & VALIDATIONS
+### Services — Responsabilité unique
 
-### Validations Front-end (Zod)
+- `MatchingEngine` : orchestre uniquement, ne calcule pas lui-même
+- `ScoreCalculator` : calcule uniquement le score principal, ne dispatche pas de job
+- `BonusDetector` : détecte uniquement les atouts, n’accède pas au score
 
-```typescript
-// Schémas de validation
-import { z } from 'zod';
+### Gestion des erreurs
 
-export const LoginSchema = z.object({
-  email: z.string().email('Email invalide'),
-  password: z.string().min(1, 'Mot de passe requis'),
-});
+- Utiliser les **Laravel Exception Handlers** pour les erreurs métier custom
+- Logger les erreurs de matching dans un channel dédié (`config/logging.php`)
+- Ne jamais retourner de stack trace à l’utilisateur final
 
-export const CandidateProfileSchema = z.object({
-  firstName: z.string().min(2, 'Min 2 caractères'),
-  lastName: z.string().min(2, 'Min 2 caractères'),
-  yearsExperience: z.number().int().min(0).max
+-----
+
+## 10. COMMANDES ARTISAN UTILES
+
+```bash
+# Recalculer le score d'une offre spécifique (debug)
+php artisan matching:recalculate --offer=ID
+
+# Générer le digest quotidien recruteur (peut être appelé manuellement)
+php artisan notifications:recruiter-digest
+
+# Vérifier la cohérence des scores (audit)
+php artisan matching:audit --date=2026-06-01
+
+# Importer la bibliothèque de compétences depuis un CSV
+php artisan import:skills-library storage/skills.csv
+```
+
+-----
+
+## 11. CE QUE TU NE DOIS JAMAIS FAIRE
+
+- ❌ Suggérer Node.js, Next.js, React, Vue (standalone), TypeScript, Prisma, ou tout autre stack non-Laravel
+- ❌ Proposer de la logique de matching dans un controller ou une vue Blade
+- ❌ Exposer les valeurs lambda ou les formules dans les réponses JSON ou les vues front
+- ❌ Utiliser `DB::statement()` brut pour des requêtes qui peuvent être faites avec Eloquent
+- ❌ Mettre des clés d’API ou secrets dans le code — toujours via `.env`
+- ❌ Créer des relations Eloquent sans les index correspondants dans les migrations
+- ❌ Retourner des données d’un autre utilisateur (vérifier ownership dans chaque policy)
+- ❌ Modifier les pondérations ou lambda sans mise à jour explicite de `config/matching.php`
+- ❌ Permettre la suppression physique des candidatures (`softDeletes` obligatoire sur `applications`)
+
+-----
+
+*MatchRH — Document confidentiel — Usage interne — Juin 2026*
